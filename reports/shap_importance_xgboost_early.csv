@@ -1,0 +1,31 @@
+feature,mean_abs_shap,share_of_total,direction
+Curricular units 1st sem (approved),0.63229305,0.23289421,higher value -> lower risk
+Tuition fees up to date,0.3496492,0.12878723,higher value -> lower risk
+Age at enrollment,0.20597678,0.07586799,higher value -> higher risk
+Curricular units 1st sem (enrolled),0.16169332,0.05955694,higher value -> higher risk
+Curricular units 1st sem (grade),0.158295,0.058305226,higher value -> lower risk
+Course,0.13312341,0.04903371,n/a (category codes)
+Gender,0.12781292,0.04707768,higher value -> higher risk
+Unemployment rate,0.12395434,0.04565644,higher value -> higher risk
+Admission grade,0.08355443,0.03077583,higher value -> higher risk
+Father's occupation,0.0778358,0.02866947,n/a (category codes)
+Displaced,0.074253485,0.027349988,higher value -> higher risk
+Curricular units 1st sem (evaluations),0.07266203,0.026763804,higher value -> lower risk
+Debtor,0.07123993,0.026239997,higher value -> higher risk
+Curricular units 1st sem (credited),0.059336685,0.021855641,higher value -> higher risk
+GDP,0.05932524,0.021851426,higher value -> lower risk
+Previous qualification (grade),0.05492938,0.020232286,higher value -> lower risk
+Mother's qualification,0.047975883,0.017671088,n/a (category codes)
+Application mode,0.04567823,0.016824786,n/a (category codes)
+Mother's occupation,0.038385548,0.014138653,n/a (category codes)
+Father's qualification,0.02753636,0.010142542,n/a (category codes)
+Scholarship holder,0.026738586,0.009848696,higher value -> lower risk
+Application order,0.024901113,0.009171894,higher value -> higher risk
+Inflation rate,0.017074425,0.006289069,higher value -> higher risk
+Nacionality,0.012121594,0.0044647795,n/a (category codes)
+Previous qualification,0.011426035,0.0042085825,n/a (category codes)
+Marital status,0.008908643,0.0032813447,n/a (category codes)
+Curricular units 1st sem (without evaluations),0.0042503476,0.0015655421,higher value -> lower risk
+Daytime/evening attendance,0.0022893713,0.00084325037,higher value -> higher risk
+International,0.0017156556,0.00063193205,higher value -> lower risk
+Educational special needs,0.0,0.0,n/a

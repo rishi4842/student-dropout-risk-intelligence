@@ -1,0 +1,37 @@
+feature,mean_abs_shap,share_of_total,direction
+Curricular units 2nd sem (approved),0.61459196,0.21421611,higher value -> lower risk
+Tuition fees up to date,0.30036876,0.10469358,higher value -> lower risk
+Curricular units 1st sem (approved),0.18597178,0.06482049,higher value -> lower risk
+Curricular units 2nd sem (grade),0.18484691,0.06442842,higher value -> lower risk
+Age at enrollment,0.1570233,0.054730494,higher value -> higher risk
+Course,0.12605752,0.043937366,n/a (category codes)
+Curricular units 2nd sem (enrolled),0.12370685,0.04311804,higher value -> higher risk
+Admission grade,0.10741645,0.03744002,higher value -> higher risk
+Father's occupation,0.07912737,0.027579857,n/a (category codes)
+Debtor,0.07648386,0.02665846,higher value -> higher risk
+Unemployment rate,0.07636067,0.026615525,higher value -> higher risk
+Curricular units 1st sem (grade),0.074167326,0.025851032,higher value -> lower risk
+Curricular units 2nd sem (evaluations),0.06817402,0.023762064,higher value -> lower risk
+Curricular units 1st sem (enrolled),0.067521855,0.023534752,higher value -> higher risk
+Gender,0.06643409,0.023155613,higher value -> higher risk
+Previous qualification (grade),0.06254592,0.02180039,higher value -> lower risk
+Curricular units 2nd sem (credited),0.050025918,0.017436542,higher value -> higher risk
+GDP,0.048312545,0.016839344,higher value -> higher risk
+Application mode,0.045268282,0.015778266,n/a (category codes)
+Mother's occupation,0.044383064,0.015469723,n/a (category codes)
+Mother's qualification,0.04334158,0.015106714,n/a (category codes)
+Application order,0.042827003,0.014927358,higher value -> higher risk
+Displaced,0.038149882,0.013297147,higher value -> higher risk
+Curricular units 1st sem (evaluations),0.03761539,0.013110849,higher value -> lower risk
+Father's qualification,0.035270818,0.012293649,n/a (category codes)
+Curricular units 1st sem (credited),0.023009237,0.008019873,higher value -> higher risk
+Inflation rate,0.021272482,0.007414527,higher value -> higher risk
+Previous qualification,0.01774227,0.006184071,n/a (category codes)
+Scholarship holder,0.012645888,0.004407726,higher value -> lower risk
+Nacionality,0.0122703435,0.0042768302,n/a (category codes)
+Marital status,0.00909082,0.0031686067,n/a (category codes)
+Curricular units 2nd sem (without evaluations),0.0054530045,0.0019006456,higher value -> lower risk
+Curricular units 1st sem (without evaluations),0.0051895226,0.0018088089,higher value -> lower risk
+Daytime/evening attendance,0.0032455095,0.0011312228,higher value -> lower risk
+International,0.0031152477,0.00108582,higher value -> lower risk
+Educational special needs,0.0,0.0,n/a
