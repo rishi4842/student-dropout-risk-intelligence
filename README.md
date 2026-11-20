@@ -180,7 +180,51 @@ Accuracy alone is misleading on imbalanced student outcome data. Success is defi
 3. **Strict Data Leakage Prevention:** All scalers, imputers, and encoders must be encapsulated strictly within a `scikit-learn Pipeline` and fitted exclusively on training folds during stratified cross-validation.
 4. **Actionable Model Interpretability:** Every prediction must be accompanied by local SHAP (SHapley Additive exPlanations) values to provide transparent, defensible reasons for mentors.
 5. **Deployment & Usability:** The final system must be delivered through an interactive, self-contained Streamlit application supporting both batch evaluation and single-student risk scoring.
-6. **Specific Quantitative Targets:** Final quantitative target benchmarks (accuracy, precision, recall, macro-F1, ROC-AUC) will be finalized after establishing baseline results and documented here.
+6. **Empirical Quantitative Benchmarks (5-Fold Stratified CV on Training Part):**
+
+#### Full Feature Set Comparison (36 Features):
+| Model | Macro-F1 | Balanced Acc | Accuracy | Dropout Recall | Dropout Precision | ROC-AUC (OvR) |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **XGBoost (untuned)** | **0.731 ± 0.017** | 0.732 ± 0.018 | 0.776 ± 0.015 | 0.759 ± 0.022 | 0.845 ± 0.022 | **0.898 ± 0.010** |
+| **Stacking Classifier** | 0.728 ± 0.017 | **0.742 ± 0.019** | 0.761 ± 0.016 | 0.748 ± 0.015 | **0.854 ± 0.025** | 0.897 ± 0.011 |
+| **LightGBM** | 0.720 ± 0.017 | 0.713 ± 0.016 | **0.777 ± 0.015** | **0.764 ± 0.021** | 0.831 ± 0.009 | 0.894 ± 0.009 |
+| **Random Forest** | 0.719 ± 0.023 | 0.720 ± 0.025 | 0.765 ± 0.018 | 0.738 ± 0.025 | 0.846 ± 0.031 | 0.890 ± 0.012 |
+| **HistGradientBoosting** | 0.711 ± 0.016 | 0.707 ± 0.015 | 0.769 ± 0.014 | 0.760 ± 0.015 | 0.816 ± 0.010 | 0.888 ± 0.008 |
+| **Logistic Regression** | 0.709 ± 0.017 | 0.717 ± 0.018 | 0.750 ± 0.013 | 0.730 ± 0.028 | 0.826 ± 0.022 | 0.887 ± 0.009 |
+| **Dummy Majority Baseline** | 0.222 ± 0.000 | 0.333 ± 0.000 | 0.499 ± 0.001 | 0.000 ± 0.000 | 0.000 ± 0.000 | 0.500 ± 0.000 |
+
+*Tuning Results (Full Features):*
+- **Tuned XGBoost:** Macro-F1 = **0.737** (`n_estimators=162`, `max_depth=5`, `learning_rate=0.080`, `subsample=0.63`, `colsample_bytree=0.57`, `min_child_weight=4`).
+- **Tuned Random Forest:** Macro-F1 = **0.722** (`n_estimators=659`, `max_depth=20`, `max_features='sqrt'`, `min_samples_leaf=1`).
+
+#### Early-Warning Feature Set Comparison (Semester 1 Only - 30 Features):
+| Model | Macro-F1 | Balanced Acc | Accuracy | Dropout Recall | Dropout Precision | ROC-AUC (OvR) |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **XGBoost (untuned)** | **0.703 ± 0.018** | 0.705 ± 0.019 | 0.748 ± 0.017 | 0.719 ± 0.025 | 0.833 ± 0.007 | **0.876 ± 0.013** |
+| **Stacking Classifier** | 0.698 ± 0.015 | **0.710 ± 0.013** | 0.732 ± 0.016 | 0.706 ± 0.029 | **0.836 ± 0.019** | 0.876 ± 0.012 |
+| **LightGBM** | 0.691 ± 0.029 | 0.687 ± 0.028 | **0.750 ± 0.024** | **0.745 ± 0.026** | 0.801 ± 0.024 | 0.871 ± 0.015 |
+| **HistGradientBoosting** | 0.690 ± 0.016 | 0.686 ± 0.014 | 0.748 ± 0.017 | 0.737 ± 0.024 | 0.801 ± 0.015 | 0.865 ± 0.012 |
+| **Random Forest** | 0.689 ± 0.021 | 0.689 ± 0.020 | 0.739 ± 0.019 | 0.717 ± 0.036 | 0.810 ± 0.026 | 0.868 ± 0.013 |
+| **Logistic Regression** | 0.682 ± 0.020 | 0.689 ± 0.020 | 0.724 ± 0.020 | 0.705 ± 0.035 | 0.812 ± 0.027 | 0.861 ± 0.012 |
+| **Dummy Majority Baseline** | 0.222 ± 0.000 | 0.333 ± 0.000 | 0.499 ± 0.001 | 0.000 ± 0.000 | 0.000 ± 0.000 | 0.500 ± 0.000 |
+
+*Tuning Results (Early Warning):*
+- **Tuned Early XGBoost:** Macro-F1 = **0.708** (`n_estimators=522`, `max_depth=5`, `learning_rate=0.025`, `subsample=0.84`, `colsample_bytree=0.72`, `min_child_weight=8`).
+
+---
+
+### Methodological & Ethical Considerations for Viva Defense
+
+- **The "Enrolled" Class Dilemma:**
+  - `Enrolled` students have neither graduated nor dropped out; they are actively persisting within normal duration.
+  - Collapsing the task into binary (Dropout vs Rest) conflates successful graduates with delayed but persistent students.
+  - Therefore, we retain the **3-class model** to respect cohort dynamics while explicitly tracking **Dropout recall** and using $P(\text{Dropout})$ as the primary risk score.
+- **Timing Leakage Audit:**
+  - In real institutional databases, features like `Debtor` and `Tuition fees up to date` may be recorded dynamically across semesters.
+  - In our early-warning pipeline, all Semester 2 academic features are strictly omitted. In production, tuition status should be frozen at the close of Semester 1 billing.
+- **Fairness & Decision Support:**
+  - Demographic features (`Gender`, `Nacionality`, `International`, `Educational special needs`) reflect documented historical and systemic disparities.
+  - The model is strictly an **advising decision-support tool** to direct resources and mentorship to students in need, NOT an automated gatekeeper or punitive instrument. Model error rates will be audited across demographic subgroups in Phase 5.
 
 ---
 
