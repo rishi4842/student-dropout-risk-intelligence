@@ -1,0 +1,50 @@
+{
+  "model": "xgboost",
+  "tag": "full",
+  "cost_ratio": 5.0,
+  "calibration_method": "platt",
+  "calibration_scores": {
+    "raw": {
+      "brier": 0.09197207712089116,
+      "ece": 0.011819250481039824
+    },
+    "platt": {
+      "brier": 0.09191948559996921,
+      "ece": 0.00940061912006278
+    },
+    "isotonic": {
+      "brier": 0.0924866759735427,
+      "ece": 0.012946813336665646
+    }
+  },
+  "threshold": 0.18,
+  "textbook_threshold": 0.16666666666666666,
+  "threshold_by_cost_ratio": {
+    "2": 0.4,
+    "3": 0.27,
+    "5": 0.18,
+    "10": 0.08
+  },
+  "oof_at_threshold": {
+    "threshold": 0.18,
+    "recall": 0.8847845206684257,
+    "precision": 0.6588081204977079,
+    "f1": 0.7552552552552553,
+    "flagged_share": 0.4314778185928228,
+    "tp": 1006,
+    "fp": 521,
+    "fn": 131
+  },
+  "oof_at_0.5": {
+    "threshold": 0.5,
+    "recall": 0.7343887423043096,
+    "precision": 0.8706986444212722,
+    "f1": 0.7967557251908397,
+    "flagged_share": 0.2709805029669398,
+    "tp": 835,
+    "fp": 124,
+    "fn": 302
+  },
+  "oof_dropout_roc_auc": 0.9218051213551886,
+  "oof_dropout_avg_precision": 0.8858972942528904
+}
