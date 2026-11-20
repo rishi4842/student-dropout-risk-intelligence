@@ -1,0 +1,35 @@
+{
+  "model": "xgboost",
+  "tag": "early",
+  "n_test": 885,
+  "three_class_macro_f1": 0.6722056487160158,
+  "three_class_accuracy": 0.7141242937853107,
+  "dropout_roc_auc": 0.8929249373110543,
+  "dropout_avg_precision": 0.8435136843650441,
+  "brier_raw": 0.11463087052106857,
+  "brier_calibrated": 0.11493651668106482,
+  "ece_raw": 0.020751469733856488,
+  "ece_calibrated": 0.027751889651877824,
+  "at_chosen_threshold": {
+    "threshold": 0.16,
+    "recall": 0.8943661971830986,
+    "precision": 0.5934579439252337,
+    "f1": 0.7134831460674157,
+    "flagged_share": 0.48361581920903957,
+    "tp": 254,
+    "fp": 174,
+    "fn": 30
+  },
+  "at_0.5": {
+    "threshold": 0.5,
+    "recall": 0.6443661971830986,
+    "precision": 0.8061674008810573,
+    "f1": 0.7162426614481409,
+    "flagged_share": 0.25649717514124293,
+    "tp": 183,
+    "fp": 44,
+    "fn": 101
+  },
+  "expected_cost_at_threshold": 324.0,
+  "cost_if_nobody_flagged": 1420.0
+}
