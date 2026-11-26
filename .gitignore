@@ -23,3 +23,7 @@ htmlcov/
 
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints/
+
+# Agent directories
+.agents/
+.claude/

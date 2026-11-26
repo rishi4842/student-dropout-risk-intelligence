@@ -75,7 +75,8 @@ def random_student(df, features):
 def score_student(art, values):
     """Dropout risk, tier and SHAP contributions for one student (dict of feature -> value)."""
     X = pd.DataFrame([values])[art.features]
-    p_raw = float(art.pipe.predict_proba(X)[0, 0])
+    probs = art.pipe.predict_proba(X)[0]
+    p_raw = float(probs[0])
     risk = float(apply_calibrator(art.method, art.calibrator, np.array([p_raw]))[0])
 
     X_t = art.pipe.named_steps["prep"].transform(X)
@@ -89,8 +90,17 @@ def score_student(art, values):
         contrib[owners[col]] = contrib.get(owners[col], 0.0) + float(sv[0, i, 0])
     contrib = pd.Series(contrib)
     contrib = contrib.reindex(contrib.abs().sort_values(ascending=False).index)
-    return {"risk": risk, "raw": p_raw, "tier": tier(risk, art.threshold),
-            "contributions": contrib}
+    return {
+        "risk": risk,
+        "raw": p_raw,
+        "probs": {
+            "Dropout": risk,
+            "Enrolled": float(probs[1]),
+            "Graduate": float(probs[2])
+        },
+        "tier": tier(risk, art.threshold),
+        "contributions": contrib
+    }
 
 
 def top_changes(contrib, values, k=3):
