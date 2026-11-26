@@ -180,6 +180,153 @@ def map_label(mapping, key, fallback_prefix="Code"):
     except (ValueError, TypeError):
         return f"{fallback_prefix} {key}"
 
+def friendly_feature_label(feature, val):
+    if feature == "Course":
+        return f"Course = {COURSE_MAP.get(int(val), f'Code {val}')}"
+    if feature == "Tuition fees up to date":
+        return f"Tuition = {'Paid Current' if int(val) == 1 else 'Overdue'}"
+    if feature == "Debtor":
+        return f"Debt Status = {'Has Unpaid Debt' if int(val) == 1 else 'No Debt'}"
+    if feature == "Scholarship holder":
+        return f"Scholarship = {'Grantee' if int(val) == 1 else 'No'}"
+    if feature == "Gender":
+        return f"Gender = {'Male' if int(val) == 1 else 'Female'}"
+    if feature == "Age at enrollment":
+        return f"Age = {int(val)} yrs"
+    if feature == "Daytime/evening attendance":
+        return f"Schedule = {'Daytime' if int(val) == 1 else 'Evening'}"
+    if feature == "Displaced":
+        return f"Residence = {'Living Away' if int(val) == 1 else 'Local'}"
+    clean = feature.replace("Curricular units ", "").replace("1st sem ", "Sem 1 ").replace("2nd sem ", "Sem 2 ")
+    return f"{clean} = {fmt_value(val)}"
+
+# ------------------------------------------------------------------ COMPREHENSIVE PERSONAS
+PERSONAS = {
+    "High-Performing Scholar": {
+        "target": "Graduate (Synthetic Persona)",
+        "values": {
+            "Curricular units 1st sem (credited)": 0,
+            "Curricular units 1st sem (enrolled)": 6,
+            "Curricular units 1st sem (evaluations)": 8,
+            "Curricular units 1st sem (approved)": 6,
+            "Curricular units 1st sem (grade)": 16.2,
+            "Curricular units 1st sem (without evaluations)": 0,
+            "Curricular units 2nd sem (credited)": 0,
+            "Curricular units 2nd sem (enrolled)": 6,
+            "Curricular units 2nd sem (evaluations)": 8,
+            "Curricular units 2nd sem (approved)": 6,
+            "Curricular units 2nd sem (grade)": 16.5,
+            "Curricular units 2nd sem (without evaluations)": 0,
+            "Tuition fees up to date": 1,
+            "Debtor": 0,
+            "Scholarship holder": 1,
+            "Age at enrollment": 19,
+            "Gender": 0,
+            "Admission grade": 158.0,
+            "Previous qualification (grade)": 160.0,
+            "Course": 9500,
+            "Application order": 1,
+            "Application mode": 1,
+            "Daytime/evening attendance": 1,
+            "Displaced": 1,
+            "Educational special needs": 0,
+            "International": 0,
+            "Marital status": 1,
+            "Nacionality": 1,
+            "Previous qualification": 1,
+            "Mother's qualification": 1,
+            "Father's qualification": 1,
+            "Mother's occupation": 4,
+            "Father's occupation": 4,
+            "Unemployment rate": 10.8,
+            "Inflation rate": 1.4,
+            "GDP": 1.74
+        }
+    },
+    "High-Risk Attrition": {
+        "target": "Dropout (Synthetic Persona)",
+        "values": {
+            "Curricular units 1st sem (credited)": 0,
+            "Curricular units 1st sem (enrolled)": 6,
+            "Curricular units 1st sem (evaluations)": 6,
+            "Curricular units 1st sem (approved)": 0,
+            "Curricular units 1st sem (grade)": 0.0,
+            "Curricular units 1st sem (without evaluations)": 0,
+            "Curricular units 2nd sem (credited)": 0,
+            "Curricular units 2nd sem (enrolled)": 6,
+            "Curricular units 2nd sem (evaluations)": 6,
+            "Curricular units 2nd sem (approved)": 0,
+            "Curricular units 2nd sem (grade)": 0.0,
+            "Curricular units 2nd sem (without evaluations)": 0,
+            "Tuition fees up to date": 0,
+            "Debtor": 1,
+            "Scholarship holder": 0,
+            "Age at enrollment": 28,
+            "Gender": 1,
+            "Admission grade": 105.0,
+            "Previous qualification (grade)": 110.0,
+            "Course": 9147,
+            "Application order": 1,
+            "Application mode": 39,
+            "Daytime/evening attendance": 0,
+            "Displaced": 0,
+            "Educational special needs": 0,
+            "International": 0,
+            "Marital status": 2,
+            "Nacionality": 1,
+            "Previous qualification": 1,
+            "Mother's qualification": 37,
+            "Father's qualification": 37,
+            "Mother's occupation": 9,
+            "Father's occupation": 9,
+            "Unemployment rate": 13.9,
+            "Inflation rate": -0.3,
+            "GDP": 0.79
+        }
+    },
+    "Borderline Struggling": {
+        "target": "Enrolled / At Risk (Synthetic Persona)",
+        "values": {
+            "Curricular units 1st sem (credited)": 0,
+            "Curricular units 1st sem (enrolled)": 6,
+            "Curricular units 1st sem (evaluations)": 7,
+            "Curricular units 1st sem (approved)": 3,
+            "Curricular units 1st sem (grade)": 11.4,
+            "Curricular units 1st sem (without evaluations)": 0,
+            "Curricular units 2nd sem (credited)": 0,
+            "Curricular units 2nd sem (enrolled)": 6,
+            "Curricular units 2nd sem (evaluations)": 7,
+            "Curricular units 2nd sem (approved)": 3,
+            "Curricular units 2nd sem (grade)": 11.0,
+            "Curricular units 2nd sem (without evaluations)": 0,
+            "Tuition fees up to date": 1,
+            "Debtor": 0,
+            "Scholarship holder": 0,
+            "Age at enrollment": 24,
+            "Gender": 0,
+            "Admission grade": 120.0,
+            "Previous qualification (grade)": 125.0,
+            "Course": 9254,
+            "Application order": 2,
+            "Application mode": 1,
+            "Daytime/evening attendance": 1,
+            "Displaced": 1,
+            "Educational special needs": 0,
+            "International": 0,
+            "Marital status": 1,
+            "Nacionality": 1,
+            "Previous qualification": 1,
+            "Mother's qualification": 19,
+            "Father's qualification": 19,
+            "Mother's occupation": 4,
+            "Father's occupation": 7,
+            "Unemployment rate": 11.1,
+            "Inflation rate": 1.4,
+            "GDP": 0.32
+        }
+    }
+}
+
 # ------------------------------------------------------------------ DATA & ARTIFACTS
 @st.cache_resource
 def get_artifacts(model="xgboost", tag="early"):
@@ -192,199 +339,172 @@ def get_data():
 df = get_data()
 base_rate = float((df["Target"] == "Dropout").mean())
 
-# ------------------------------------------------------------------ SIDEBAR CONTROLS
+# ------------------------------------------------------------------ SIDEBAR
 with st.sidebar:
     st.markdown("### 🎓 Retention Intelligence")
     st.caption("Course Project INT395 • Supervised Learning")
 
     st.markdown("#### Model & Pipeline Mode")
+    tag_options = ["Early-Warning (Semester 1 Only)", "Full Curriculum (Semesters 1 & 2)"]
     tag_choice = st.segmented_control(
         "Prediction Pipeline",
-        options=["⚡ Early-Warning (Sem 1)", "📚 Full Curriculum (Sem 1 & 2)"],
-        default="⚡ Early-Warning (Sem 1)",
+        options=tag_options,
+        default=tag_options[0],
         label_visibility="collapsed"
     )
-    selected_tag = "early" if "Early" in tag_choice else "full"
+    selected_tag = "early" if "Early-Warning" in tag_choice else "full"
     art = get_artifacts("xgboost", selected_tag)
     features = art.features
     specs = feature_specs(df, features)
 
-    st.markdown("#### Student Presets")
-    preset_choice = st.selectbox(
-        "Choose Persona or Load Student",
-        [
-            "Custom Input (Live Sliders)",
-            "🚨 Persona: High-Risk Attrition",
-            "⭐ Persona: High-Performing Scholar",
-            "⚖️ Persona: Borderline Struggling",
-        ],
-        index=0,
-    )
-
-    col_btn1, col_btn2 = st.columns(2)
-    with col_btn1:
-        load_random_clicked = st.button("🎲 Sample Random", use_container_width=True)
-    with col_btn2:
-        reset_clicked = st.button("🔄 Reset Baseline", use_container_width=True)
-
-    # State management for features
     def typed(spec, v):
         return int(v) if spec["kind"] in ("binary", "nominal", "int") else float(v)
 
-    # Initialize session state if missing
-    for f in features:
-        st.session_state.setdefault(f, typed(specs[f], specs[f]["default"]))
+    # Initialize master profile in session state
+    if "student_profile" not in st.session_state:
+        st.session_state["student_profile"] = {f: typed(specs[f], specs[f]["default"]) for f in features}
+    else:
+        # Fill in any missing features when switching between early and full
+        for f in features:
+            if f not in st.session_state["student_profile"]:
+                st.session_state["student_profile"][f] = typed(specs[f], specs[f]["default"])
+
     st.session_state.setdefault("_outcome", None)
-    st.session_state.setdefault("_preset_name", "Custom")
+    st.session_state.setdefault("_active_persona", "Custom Input")
 
-    # Handle preset clicks
-    if load_random_clicked:
-        vals, outcome = random_student(df, features)
-        for f in features:
-            st.session_state[f] = typed(specs[f], vals[f])
-        st.session_state["_outcome"] = outcome
-        st.session_state["_preset_name"] = "Random Dataset Student"
-        st.toast(f"Loaded random student record (Actual: {outcome})", icon="🎲")
+    st.markdown("#### Student Presets")
+    preset_list = [
+        "Custom Input",
+        "High-Risk Attrition",
+        "High-Performing Scholar",
+        "Borderline Struggling"
+    ]
 
-    elif reset_clicked:
-        for f in features:
-            st.session_state[f] = typed(specs[f], specs[f]["default"])
-        st.session_state["_outcome"] = None
-        st.session_state["_preset_name"] = "Baseline"
-        st.toast("Reset student profile to cohort medians.", icon="🔄")
+    selected_preset = st.selectbox(
+        "Select Persona or Preset",
+        preset_list,
+        index=preset_list.index(st.session_state["_active_persona"]) if st.session_state["_active_persona"] in preset_list else 0
+    )
 
-    elif preset_choice == "🚨 Persona: High-Risk Attrition" and st.session_state.get("_preset_name") != "High-Risk":
-        st.session_state["Curricular units 1st sem (approved)"] = 0
-        st.session_state["Curricular units 1st sem (enrolled)"] = 6
-        st.session_state["Curricular units 1st sem (grade)"] = 0.0
-        st.session_state["Tuition fees up to date"] = 0
-        st.session_state["Debtor"] = 1
-        st.session_state["Scholarship holder"] = 0
-        st.session_state["Age at enrollment"] = 28
-        st.session_state["Admission grade"] = 105.0
-        st.session_state["Course"] = 9147  # Management
-        if "Curricular units 2nd sem (approved)" in features:
-            st.session_state["Curricular units 2nd sem (approved)"] = 0
-            st.session_state["Curricular units 2nd sem (grade)"] = 0.0
-        st.session_state["_outcome"] = "Dropout (Synthetic Persona)"
-        st.session_state["_preset_name"] = "High-Risk"
+    # If preset selection changed
+    if selected_preset != st.session_state["_active_persona"] and selected_preset in PERSONAS:
+        st.session_state["_active_persona"] = selected_preset
+        p_data = PERSONAS[selected_preset]
+        for f, val in p_data["values"].items():
+            if f in specs:
+                typed_val = typed(specs[f], val)
+                st.session_state["student_profile"][f] = typed_val
+                st.session_state[f"inp_{f}"] = typed_val
+        st.session_state["_outcome"] = p_data["target"]
+        st.rerun()
 
-    elif preset_choice == "⭐ Persona: High-Performing Scholar" and st.session_state.get("_preset_name") != "Scholar":
-        st.session_state["Curricular units 1st sem (approved)"] = 6
-        st.session_state["Curricular units 1st sem (enrolled)"] = 6
-        st.session_state["Curricular units 1st sem (grade)"] = 16.2
-        st.session_state["Tuition fees up to date"] = 1
-        st.session_state["Debtor"] = 0
-        st.session_state["Scholarship holder"] = 1
-        st.session_state["Age at enrollment"] = 19
-        st.session_state["Admission grade"] = 158.0
-        st.session_state["Course"] = 9500  # Nursing
-        if "Curricular units 2nd sem (approved)" in features:
-            st.session_state["Curricular units 2nd sem (approved)"] = 6
-            st.session_state["Curricular units 2nd sem (grade)"] = 16.5
-        st.session_state["_outcome"] = "Graduate (Synthetic Persona)"
-        st.session_state["_preset_name"] = "Scholar"
+    col_btn1, col_btn2 = st.columns(2)
+    with col_btn1:
+        if st.button("Sample Random", use_container_width=True):
+            vals, outcome = random_student(df, features)
+            for f in features:
+                typed_val = typed(specs[f], vals[f])
+                st.session_state["student_profile"][f] = typed_val
+                st.session_state[f"inp_{f}"] = typed_val
+            st.session_state["_outcome"] = f"{outcome} (Actual Dataset Record)"
+            st.session_state["_active_persona"] = "Custom Input"
+            st.toast(f"Loaded random student record: {outcome}", icon="🎲")
+            st.rerun()
 
-    elif preset_choice == "⚖️ Persona: Borderline Struggling" and st.session_state.get("_preset_name") != "Borderline":
-        st.session_state["Curricular units 1st sem (approved)"] = 3
-        st.session_state["Curricular units 1st sem (enrolled)"] = 6
-        st.session_state["Curricular units 1st sem (grade)"] = 11.4
-        st.session_state["Tuition fees up to date"] = 1
-        st.session_state["Debtor"] = 0
-        st.session_state["Scholarship holder"] = 0
-        st.session_state["Age at enrollment"] = 24
-        st.session_state["Admission grade"] = 120.0
-        st.session_state["Course"] = 9254  # Tourism
-        if "Curricular units 2nd sem (approved)" in features:
-            st.session_state["Curricular units 2nd sem (approved)"] = 3
-            st.session_state["Curricular units 2nd sem (grade)"] = 11.0
-        st.session_state["_outcome"] = "Enrolled / At Risk"
-        st.session_state["_preset_name"] = "Borderline"
+    with col_btn2:
+        if st.button("Reset Median", use_container_width=True):
+            for f in features:
+                typed_val = typed(specs[f], specs[f]["default"])
+                st.session_state["student_profile"][f] = typed_val
+                st.session_state[f"inp_{f}"] = typed_val
+            st.session_state["_outcome"] = None
+            st.session_state["_active_persona"] = "Custom Input"
+            st.toast("Reset to cohort baseline medians.", icon="🔄")
+            st.rerun()
 
     if st.session_state.get("_outcome"):
-        st.info(f"Target Record: **{st.session_state['_outcome']}**")
+        st.info(f"Target Label: **{st.session_state['_outcome']}**")
 
     st.markdown("---")
-    st.markdown("#### Model Telemetry")
+    st.markdown("#### Model Specifications")
     res_path = ROOT / "reports" / f"test_results_xgboost_{selected_tag}.json"
     if res_path.exists():
         res_data = json.load(open(res_path))
-        st.caption(f"**Evaluated on:** {res_data['n_test']} Holdout Students")
+        st.caption(f"**Test Set:** {res_data['n_test']} Holdout Students")
         st.caption(f"• **Dropout ROC-AUC:** `{res_data['dropout_roc_auc']:.3f}`")
         st.caption(f"• **Dropout Recall:** `{res_data['at_chosen_threshold']['recall']:.1%}`")
-        st.caption(f"• **Cost Reduction:** `77%` vs Unflagged")
-        st.caption(f"• **Triage Cutoff ($t$):** `{art.threshold:.2f}` (5:1 penalty)")
+        st.caption(f"• **Cost Reduction:** `77.2%` vs Flag Nobody")
+        st.caption(f"• **Cost Reduction:** `~46%` vs Flag Everyone")
+        st.caption(f"• **Decision Threshold ($t$):** `{art.threshold:.2f}` (5:1 penalty)")
 
-# ------------------------------------------------------------------ HEADER SECTION
+# ------------------------------------------------------------------ HEADER
 st.title("Student Retention & Early-Warning Intelligence")
 st.markdown(
     ":blue-badge[INT395 Supervised Learning] "
     ":green-badge[Verified Single-Pass Holdout (N=885)] "
     ":orange-badge[TreeSHAP Interpretable] "
-    f":gray-badge[Active: {'Early-Warning (Sem 1)' if selected_tag == 'early' else 'Full Curriculum'}]"
+    f":gray-badge[Active Pipeline: {'Semester 1 Early-Warning' if selected_tag == 'early' else 'Full Curriculum (Sem 1 & 2)'}]"
 )
 st.caption(
     "Decision-support system for academic advisors to identify early student attrition risk, "
-    "diagnose personalized contributing factors, and guide targeted clinical retention interventions."
+    "diagnose personalized contributing factors, and guide targeted retention interventions."
 )
 
 # ------------------------------------------------------------------ TABS
 tab_overview, tab_studio, tab_simulator, tab_audit = st.tabs([
-    "🎯 Risk Assessment & AI Advisor",
-    "📝 Student Profile Studio",
-    "🧪 What-If Intervention Lab",
-    "🛡️ Model Governance & Fairness"
+    "Risk Assessment & Advisor",
+    "Student Profile Studio",
+    "What-If Intervention Lab",
+    "Model Governance & Fairness"
 ])
 
-# Gather current values from session state
-current_values = {f: st.session_state[f] for f in features}
+# Current values for scoring
+current_values = {f: st.session_state["student_profile"][f] for f in features}
 result = score_student(art, current_values)
 risk = result["risk"]
 tier_name = result["tier"]
 raw_p = result["raw"]
-probs = result.get("probs", {"Dropout": risk, "Enrolled": 0.18, "Graduate": 1 - risk - 0.18})
+probs = result.get("probs", {"Dropout": risk, "Enrolled": 0.18, "Graduate": max(0.0, 1.0 - risk - 0.18)})
 t = art.threshold
 
 # ==============================================================================
-# TAB 1: RISK ASSESSMENT & AI ADVISOR
+# TAB 1: RISK ASSESSMENT & ADVISOR
 # ==============================================================================
 with tab_overview:
-    # Top KPI Cards
+    # Row 1: KPI Cards without misleading arrows
     col_kpi1, col_kpi2, col_kpi3 = st.columns(3)
 
     with col_kpi1:
         with st.container(border=True):
+            st.markdown("#### Attrition Risk Status")
+            st.metric("Dropout Probability", f"{risk:.1%}")
             if tier_name == "High":
-                st.markdown("#### 🔴 Dropout Risk: **High**")
-                st.metric("P(Dropout)", f"{risk:.1%}", delta=f"{risk - base_rate:+.1%} vs cohort avg", delta_color="inverse")
-                st.error("Priority 1-on-1 advisor outreach mandated within 7 days.")
+                st.markdown(":red-badge[HIGH RISK] • Priority 1-on-1 advisor outreach required.")
             elif tier_name == "Medium":
-                st.markdown("#### 🟡 Dropout Risk: **Medium**")
-                st.metric("P(Dropout)", f"{risk:.1%}", delta=f"{risk - base_rate:+.1%} vs cohort avg", delta_color="inverse")
-                st.warning("Automated check-in & peer tutoring referral suggested.")
+                st.markdown(":orange-badge[MEDIUM RISK] • Automated check-in & tutoring referral suggested.")
             else:
-                st.markdown("#### 🟢 Dropout Risk: **Low**")
-                st.metric("P(Dropout)", f"{risk:.1%}", delta=f"{risk - base_rate:+.1%} vs cohort avg", delta_color="inverse")
-                st.success("Standard academic advising schedule. On track.")
+                st.markdown(":green-badge[LOW RISK] • Student on track on regular advising track.")
 
     with col_kpi2:
         with st.container(border=True):
-            st.markdown("#### ⚖️ Decision Threshold")
-            st.metric("Cost-Optimal Cutoff (t)", f"{t:.0%}", f"Cost penalty ratio 5:1")
+            st.markdown("#### Decision Threshold")
+            st.metric("Operational Cutoff (t)", f"{t:.0%}")
+            st.caption("Calibrated at 5:1 penalty ratio (missing a dropout is 5x more costly than a false alarm).")
             if risk >= t:
-                st.markdown(f"**Flagged for Intervention:** Student risk (`{risk:.1%}`) exceeds operational threshold (`{t:.0%}`).")
+                st.markdown(f"**Flagged:** Risk (`{risk:.1%}`) exceeds intervention threshold (`{t:.0%}`).")
             else:
-                st.markdown(f"**Below Flagging Threshold:** Student risk (`{risk:.1%}`) is under the operational trigger (`{t:.0%}`).")
+                st.markdown(f"**Unflagged:** Risk (`{risk:.1%}`) is within acceptable bounds.")
 
     with col_kpi3:
         with st.container(border=True):
-            st.markdown("#### 📊 Outcome Probabilities")
+            st.markdown("#### Multiclass Probabilities")
             p_drop = probs.get("Dropout", risk)
             p_enr = probs.get("Enrolled", 0.18)
             p_grad = max(0.0, 1.0 - p_drop - p_enr)
-            st.markdown(f"• **Graduate:** `{p_grad:.1%}`")
-            st.markdown(f"• **Persist (Enrolled):** `{p_enr:.1%}`")
-            st.markdown(f"• **Dropout:** `{p_drop:.1%}`")
+            st.markdown(f"• **P(Graduate):** `{p_grad:.1%}`")
+            st.markdown(f"• **P(Persist / Enrolled):** `{p_enr:.1%}`")
+            st.markdown(f"• **P(Dropout):** `{p_drop:.1%}`")
+            st.caption(f"Cohort historical baseline dropout rate: `{base_rate:.1%}`")
 
     # Visual Risk Spectrum Gauge
     with st.container(border=True):
@@ -394,8 +514,8 @@ with tab_overview:
         high_percent = int(HIGH_TIER * 100)
 
         gauge_html = f"""
-        <div style="margin: 10px 0 20px 0;">
-            <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 5px; color: #94A3B8;">
+        <div style="margin: 10px 0 16px 0;">
+            <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; color: #94A3B8;">
                 <span>🟢 Safe (0%)</span>
                 <span>Cutoff: {t_percent}% (5:1 min cost)</span>
                 <span>High Alert: {high_percent}%</span>
@@ -405,50 +525,63 @@ with tab_overview:
                 <div style="position: absolute; left: {gauge_percent}%; top: -6px; transform: translateX(-50%); width: 12px; height: 32px; background-color: #FFFFFF; border: 2px solid #0F172A; border-radius: 6px; box-shadow: 0 0 10px rgba(0,0,0,0.5);"></div>
             </div>
             <div style="text-align: center; margin-top: 8px; font-weight: 600; font-size: 14px;">
-                Current Position: {risk:.1%} ({tier_name} Risk Zone)
+                Student Position: {risk:.1%} ({tier_name} Risk Category)
             </div>
         </div>
         """
         st.html(gauge_html)
 
-    # Detailed Analysis: Action Plan & TreeSHAP
+    # Advisor Guidance & TreeSHAP
     col_plan, col_shap = st.columns([1, 1])
 
     with col_plan:
         with st.container(border=True):
-            st.markdown("### 📋 Prescriptive Advisor Action Plan")
-            st.markdown(f"**Primary Guidance:** {TIER_ACTIONS[tier_name]}")
+            st.markdown("### Prescriptive Advisor Action Plan")
+            st.markdown(f"**Policy Guideline:** {TIER_ACTIONS[tier_name]}")
 
             contrib = result["contributions"]
             up_factors = [f for f, v in contrib.items() if v > 0]
-            down_factors = [f for f, v in contrib.items() if v < 0]
 
-            st.markdown("#### 💬 Recommended Talking Points")
+            st.markdown("#### Recommended Talking Points")
             talking_points = []
-            if "Tuition fees up to date" in up_factors:
-                talking_points.append("💸 **Tuition Payment Status:** Discuss emergency student hardship funds, installment schedules, or student union grants.")
-            if any("approved" in f for f in up_factors):
-                talking_points.append("📚 **Academic Recovery:** Investigate dropped/failed units and connect with faculty office hours and peer tutoring.")
-            if "Age at enrollment" in up_factors:
-                talking_points.append("⏰ **Work-Life Balance:** Explore flexible evening course alternatives or part-time matriculation tracks for mature students.")
-            if not talking_points:
-                talking_points.append("✅ **Positive Reinforcement:** Affirm current academic momentum and ensure continuity for the upcoming semester.")
+            
+            # Check enrolled & approved accurately
+            enrolled_units = current_values.get("Curricular units 1st sem (enrolled)", 0)
+            approved_units = current_values.get("Curricular units 1st sem (approved)", 0)
+            grade_sem1 = current_values.get("Curricular units 1st sem (grade)", 0.0)
+
+            if enrolled_units == 0:
+                talking_points.append("Registration Status: Student has 0 enrolled units in Semester 1. Inquire about administrative matriculation holds, program transfer, or formal leave of absence.")
+            elif approved_units < enrolled_units:
+                failed_count = enrolled_units - approved_units
+                talking_points.append(f"Academic Recovery: Student did not pass {failed_count} of {enrolled_units} enrolled units. Connect with course coordinators for remedial tutoring and faculty office hours.")
+            else:
+                talking_points.append(f"Academic Momentum: Passed all {enrolled_units} enrolled units with an average grade of {grade_sem1:.1f}/20. Discuss honors coursework or degree pacing.")
+
+            if current_values.get("Tuition fees up to date", 1) == 0:
+                talking_points.append("Financial Status: Overdue tuition payments detected. Discuss institutional emergency hardship funds, installment plans, or bursar deferrals.")
+
+            if current_values.get("Debtor", 0) == 1:
+                talking_points.append("Institutional Debt: Active unpaid student debts on record. Prioritize financial aid counseling to prevent registration cancellation.")
+
+            if current_values.get("Age at enrollment", 20) > 25:
+                talking_points.append("Mature Student Support: Discuss work-life-study scheduling flexibility, evening session options, and adult learner peer networks.")
 
             for tp in talking_points:
                 st.markdown(f"• {tp}")
 
-            st.markdown("#### ⏱️ Recommended Follow-Up Window")
+            st.markdown("#### Recommended Review Window")
             if tier_name == "High":
-                st.error("🚨 **Urgent:** Schedule personal meeting within **7 calendar days**.")
+                st.error("Priority: Schedule in-person or virtual advising conference within 7 calendar days.")
             elif tier_name == "Medium":
-                st.warning("⚠️ **Moderate:** Review progress within **30 calendar days**.")
+                st.warning("Moderate: Check academic progress and tutoring engagement within 30 calendar days.")
             else:
-                st.success("🟢 **Routine:** Follow standard semester advising milestones.")
+                st.success("Standard: Follow standard semester advising milestones.")
 
     with col_shap:
         with st.container(border=True):
-            st.markdown("### 🔍 TreeSHAP Feature Attribution")
-            st.caption("How specific factors push this student's risk up or down (Class 0: Dropout)")
+            st.markdown("### TreeSHAP Feature Attribution")
+            st.caption("Impact of individual factors pushing this student's risk toward or away from dropout (Class 0: Dropout)")
 
             top_k = contrib.head(8)
             rest_sum = contrib.iloc[8:].sum()
@@ -456,11 +589,9 @@ with tab_overview:
             plot_items = []
             for f in top_k.index:
                 val = current_values.get(f, 0)
-                formatted_val = fmt_value(val)
-                # Shorten long feature names for clean display
-                clean_name = f.replace("Curricular units ", "").replace("1st sem ", "Sem1 ").replace("2nd sem ", "Sem2 ")
+                label_str = friendly_feature_label(f, val)
                 plot_items.append({
-                    "Feature": f"{clean_name} = {formatted_val}",
+                    "Feature": label_str,
                     "SHAP Impact": float(top_k[f]),
                     "Direction": "Increases Risk" if top_k[f] > 0 else "Reduces Risk"
                 })
@@ -474,252 +605,331 @@ with tab_overview:
 
             df_shap = pd.DataFrame(plot_items)
 
-            # Modern Altair horizontal bar chart
+            # Altair bar chart with expanded label limit so text is never cut off
             chart = alt.Chart(df_shap).mark_bar(cornerRadiusEnd=4).encode(
-                x=alt.X("SHAP Impact:Q", title="Log-Odds Contribution (Red = Toward Dropout)"),
-                y=alt.Y("Feature:N", sort=None, title=None),
+                x=alt.X("SHAP Impact:Q", title="Log-Odds Contribution to Dropout Score"),
+                y=alt.Y(
+                    "Feature:N",
+                    sort=None,
+                    title=None,
+                    axis=alt.Axis(labelLimit=320, labelFontSize=12, labelColor="#E2E8F0")
+                ),
                 color=alt.Color(
                     "Direction:N",
                     scale=alt.Scale(domain=["Increases Risk", "Reduces Risk"], range=["#EF4444", "#3B82F6"]),
                     legend=alt.Legend(orient="bottom", title=None)
                 ),
                 tooltip=["Feature", "SHAP Impact", "Direction"]
-            ).properties(height=320)
+            ).properties(height=340)
 
             st.altair_chart(chart, use_container_width=True)
 
             up_changes, down_changes = top_changes(contrib, current_values)
-            st.markdown(f":red-badge[Top Risk Factors:] {', '.join(up_changes) if up_changes else 'None'}")
-            st.markdown(f":blue-badge[Top Protective Factors:] {', '.join(down_changes) if down_changes else 'None'}")
-            st.caption("⚠️ *TreeSHAP quantifies model feature reliance, not real-world causation.*")
+            st.markdown(f":red-badge[Primary Risk Drivers:] {', '.join(up_changes) if up_changes else 'None'}")
+            st.markdown(f":blue-badge[Primary Protective Factors:] {', '.join(down_changes) if down_changes else 'None'}")
+            st.caption("TreeSHAP quantifies model feature reliance, not real-world causality.")
 
 # ==============================================================================
 # TAB 2: STUDENT PROFILE STUDIO
 # ==============================================================================
 with tab_studio:
-    st.markdown("### 📝 Student Data & Parameters Studio")
-    st.caption("Adjust student academic, socioeconomic, and demographic records below. Changes update the risk model in real-time.")
+    st.markdown("### Student Profile Studio")
+    st.caption("Adjust student academic, financial, and demographic parameters. The model re-scores immediately.")
 
     col_acad, col_socio, col_demo = st.columns(3)
 
     with col_acad:
         with st.container(border=True):
-            st.markdown("#### 📚 Academic Record (Sem 1 & 2)")
+            if selected_tag == "early":
+                st.markdown("#### Academic Record (Semester 1 Early-Warning)")
+            else:
+                st.markdown("#### Academic Record (Semesters 1 & 2 Full Curriculum)")
 
-            st.session_state["Curricular units 1st sem (approved)"] = st.slider(
-                "Sem 1 Approved Units", 0, 26,
-                value=int(st.session_state.get("Curricular units 1st sem (approved)", 5)),
-                help="Units successfully passed in Semester 1."
-            )
-            st.session_state["Curricular units 1st sem (enrolled)"] = st.slider(
+            # Use unique persistent widget keys bound to student_profile
+            cur_enrolled_1 = int(st.session_state["student_profile"].get("Curricular units 1st sem (enrolled)", 6))
+            new_enrolled_1 = st.slider(
                 "Sem 1 Enrolled Units", 0, 26,
-                value=int(st.session_state.get("Curricular units 1st sem (enrolled)", 6)),
-                help="Total units matriculated in Semester 1."
+                value=cur_enrolled_1,
+                key="inp_Curricular units 1st sem (enrolled)"
             )
-            st.session_state["Curricular units 1st sem (evaluations)"] = st.number_input(
-                "Sem 1 Evaluation Moments", 0, 45,
-                value=int(st.session_state.get("Curricular units 1st sem (evaluations)", 8)),
-                help="Assessments or exam sittings attended."
+            st.session_state["student_profile"]["Curricular units 1st sem (enrolled)"] = new_enrolled_1
+
+            cur_approved_1 = min(int(st.session_state["student_profile"].get("Curricular units 1st sem (approved)", 5)), new_enrolled_1)
+            new_approved_1 = st.slider(
+                "Sem 1 Approved Units", 0, max(new_enrolled_1, 1) if new_enrolled_1 > 0 else 0,
+                value=cur_approved_1,
+                key="inp_Curricular units 1st sem (approved)",
+                help="Approved units cannot exceed enrolled units."
             )
-            st.session_state["Curricular units 1st sem (grade)"] = st.slider(
+            st.session_state["student_profile"]["Curricular units 1st sem (approved)"] = new_approved_1
+
+            cur_eval_1 = max(int(st.session_state["student_profile"].get("Curricular units 1st sem (evaluations)", 8)), new_approved_1)
+            new_eval_1 = st.number_input(
+                "Sem 1 Evaluation Moments", min_value=new_approved_1, max_value=45,
+                value=cur_eval_1,
+                key="inp_Curricular units 1st sem (evaluations)",
+                help="Evaluations cannot be less than approved units."
+            )
+            st.session_state["student_profile"]["Curricular units 1st sem (evaluations)"] = new_eval_1
+
+            cur_grade_1 = float(st.session_state["student_profile"].get("Curricular units 1st sem (grade)", 12.5))
+            new_grade_1 = st.slider(
                 "Sem 1 Grade Average (0–20 Scale)", 0.0, 20.0,
-                value=float(st.session_state.get("Curricular units 1st sem (grade)", 12.5)),
-                step=0.1
+                value=cur_grade_1, step=0.1,
+                key="inp_Curricular units 1st sem (grade)"
             )
-            st.session_state["Curricular units 1st sem (credited)"] = st.number_input(
+            st.session_state["student_profile"]["Curricular units 1st sem (grade)"] = new_grade_1
+
+            st.session_state["student_profile"]["Curricular units 1st sem (credited)"] = st.number_input(
                 "Sem 1 Credited Units", 0, 20,
-                value=int(st.session_state.get("Curricular units 1st sem (credited)", 0))
+                value=int(st.session_state["student_profile"].get("Curricular units 1st sem (credited)", 0)),
+                key="inp_Curricular units 1st sem (credited)"
             )
-            st.session_state["Curricular units 1st sem (without evaluations)"] = st.number_input(
+            st.session_state["student_profile"]["Curricular units 1st sem (without evaluations)"] = st.number_input(
                 "Sem 1 Without Evaluations", 0, 12,
-                value=int(st.session_state.get("Curricular units 1st sem (without evaluations)", 0))
+                value=int(st.session_state["student_profile"].get("Curricular units 1st sem (without evaluations)", 0)),
+                key="inp_Curricular units 1st sem (without evaluations)"
             )
 
             if "Curricular units 2nd sem (approved)" in features:
                 st.markdown("---")
-                st.markdown("**Semester 2 Record (Full Model Only)**")
-                st.session_state["Curricular units 2nd sem (approved)"] = st.slider(
-                    "Sem 2 Approved Units", 0, 26,
-                    value=int(st.session_state.get("Curricular units 2nd sem (approved)", 5))
-                )
-                st.session_state["Curricular units 2nd sem (enrolled)"] = st.slider(
+                st.markdown("**Semester 2 Record (Full Model)**")
+
+                cur_enrolled_2 = int(st.session_state["student_profile"].get("Curricular units 2nd sem (enrolled)", 6))
+                new_enrolled_2 = st.slider(
                     "Sem 2 Enrolled Units", 0, 26,
-                    value=int(st.session_state.get("Curricular units 2nd sem (enrolled)", 6))
+                    value=cur_enrolled_2,
+                    key="inp_Curricular units 2nd sem (enrolled)"
                 )
-                st.session_state["Curricular units 2nd sem (grade)"] = st.slider(
+                st.session_state["student_profile"]["Curricular units 2nd sem (enrolled)"] = new_enrolled_2
+
+                cur_approved_2 = min(int(st.session_state["student_profile"].get("Curricular units 2nd sem (approved)", 5)), new_enrolled_2)
+                new_approved_2 = st.slider(
+                    "Sem 2 Approved Units", 0, max(new_enrolled_2, 1) if new_enrolled_2 > 0 else 0,
+                    value=cur_approved_2,
+                    key="inp_Curricular units 2nd sem (approved)"
+                )
+                st.session_state["student_profile"]["Curricular units 2nd sem (approved)"] = new_approved_2
+
+                cur_eval_2 = max(int(st.session_state["student_profile"].get("Curricular units 2nd sem (evaluations)", 8)), new_approved_2)
+                new_eval_2 = st.number_input(
+                    "Sem 2 Evaluation Moments", min_value=new_approved_2, max_value=45,
+                    value=cur_eval_2,
+                    key="inp_Curricular units 2nd sem (evaluations)"
+                )
+                st.session_state["student_profile"]["Curricular units 2nd sem (evaluations)"] = new_eval_2
+
+                new_grade_2 = st.slider(
                     "Sem 2 Grade Average (0–20 Scale)", 0.0, 20.0,
-                    value=float(st.session_state.get("Curricular units 2nd sem (grade)", 12.5)),
-                    step=0.1
+                    value=float(st.session_state["student_profile"].get("Curricular units 2nd sem (grade)", 12.5)), step=0.1,
+                    key="inp_Curricular units 2nd sem (grade)"
                 )
+                st.session_state["student_profile"]["Curricular units 2nd sem (grade)"] = new_grade_2
             else:
                 st.info("🔒 Semester 2 features excluded in Early-Warning mode to eliminate lookahead leakage.")
 
     with col_socio:
         with st.container(border=True):
-            st.markdown("#### 💳 Socioeconomic & Financial")
+            st.markdown("#### Financial & Enrollment Status")
 
-            tuition_val = st.segmented_control(
+            tuition_current = int(st.session_state["student_profile"].get("Tuition fees up to date", 1))
+            tuition_choice = st.segmented_control(
                 "Tuition Fees Current?",
                 options=["Yes (Up to Date)", "No (Overdue)"],
-                default="Yes (Up to Date)" if st.session_state.get("Tuition fees up to date", 1) == 1 else "No (Overdue)"
+                default="Yes (Up to Date)" if tuition_current == 1 else "No (Overdue)",
+                key="seg_tuition"
             )
-            st.session_state["Tuition fees up to date"] = 1 if "Yes" in tuition_val else 0
+            st.session_state["student_profile"]["Tuition fees up to date"] = 1 if "Yes" in (tuition_choice or "Yes") else 0
 
-            debtor_val = st.segmented_control(
+            debtor_current = int(st.session_state["student_profile"].get("Debtor", 0))
+            debtor_choice = st.segmented_control(
                 "Institutional Debts?",
                 options=["No Debt", "Has Unpaid Debt"],
-                default="No Debt" if st.session_state.get("Debtor", 0) == 0 else "Has Unpaid Debt"
+                default="No Debt" if debtor_current == 0 else "Has Unpaid Debt",
+                key="seg_debtor"
             )
-            st.session_state["Debtor"] = 1 if "Has" in debtor_val else 0
+            st.session_state["student_profile"]["Debtor"] = 1 if "Has" in (debtor_choice or "No") else 0
 
-            scholarship_val = st.segmented_control(
+            scholarship_current = int(st.session_state["student_profile"].get("Scholarship holder", 0))
+            scholarship_choice = st.segmented_control(
                 "Scholarship Grantee?",
                 options=["No", "Yes (Grantee)"],
-                default="Yes (Grantee)" if st.session_state.get("Scholarship holder", 0) == 1 else "No"
+                default="Yes (Grantee)" if scholarship_current == 1 else "No",
+                key="seg_scholarship"
             )
-            st.session_state["Scholarship holder"] = 1 if "Yes" in scholarship_val else 0
+            st.session_state["student_profile"]["Scholarship holder"] = 1 if "Yes" in (scholarship_choice or "No") else 0
 
-            attend_val = st.segmented_control(
+            attend_current = int(st.session_state["student_profile"].get("Daytime/evening attendance", 1))
+            attend_choice = st.segmented_control(
                 "Attendance Schedule",
                 options=["Daytime", "Evening"],
-                default="Daytime" if st.session_state.get("Daytime/evening attendance", 1) == 1 else "Evening"
+                default="Daytime" if attend_current == 1 else "Evening",
+                key="seg_attend"
             )
-            st.session_state["Daytime/evening attendance"] = 1 if attend_val == "Daytime" else 0
+            st.session_state["student_profile"]["Daytime/evening attendance"] = 1 if attend_choice == "Daytime" else 0
 
-            displaced_val = st.segmented_control(
+            displaced_current = int(st.session_state["student_profile"].get("Displaced", 1))
+            displaced_choice = st.segmented_control(
                 "Displaced Student?",
                 options=["Local", "Living Away From Home"],
-                default="Living Away From Home" if st.session_state.get("Displaced", 1) == 1 else "Local"
+                default="Living Away From Home" if displaced_current == 1 else "Local",
+                key="seg_displaced"
             )
-            st.session_state["Displaced"] = 1 if "Away" in displaced_val else 0
+            st.session_state["student_profile"]["Displaced"] = 1 if "Away" in (displaced_choice or "Local") else 0
 
             st.markdown("---")
             st.markdown("**Macroeconomic Indicators**")
-            st.session_state["Unemployment rate"] = st.number_input(
+            st.session_state["student_profile"]["Unemployment rate"] = st.number_input(
                 "Unemployment Rate (%)", 0.0, 30.0,
-                value=float(st.session_state.get("Unemployment rate", 10.8)), step=0.1
+                value=float(st.session_state["student_profile"].get("Unemployment rate", 10.8)), step=0.1,
+                key="inp_Unemployment rate"
             )
-            st.session_state["Inflation rate"] = st.number_input(
+            st.session_state["student_profile"]["Inflation rate"] = st.number_input(
                 "Inflation Rate (%)", -5.0, 10.0,
-                value=float(st.session_state.get("Inflation rate", 1.4)), step=0.1
+                value=float(st.session_state["student_profile"].get("Inflation rate", 1.4)), step=0.1,
+                key="inp_Inflation rate"
             )
-            st.session_state["GDP"] = st.number_input(
+            st.session_state["student_profile"]["GDP"] = st.number_input(
                 "GDP Change (%)", -10.0, 10.0,
-                value=float(st.session_state.get("GDP", 1.74)), step=0.1
+                value=float(st.session_state["student_profile"].get("GDP", 1.74)), step=0.1,
+                key="inp_GDP"
             )
 
     with col_demo:
         with st.container(border=True):
-            st.markdown("#### 👤 Demographics & Program")
+            st.markdown("#### Demographics & Program")
 
-            st.session_state["Age at enrollment"] = st.slider(
+            st.session_state["student_profile"]["Age at enrollment"] = st.slider(
                 "Age at Enrollment", 17, 70,
-                value=int(st.session_state.get("Age at enrollment", 20))
+                value=int(st.session_state["student_profile"].get("Age at enrollment", 20)),
+                key="inp_Age at enrollment"
             )
 
-            gender_val = st.segmented_control(
+            gender_current = int(st.session_state["student_profile"].get("Gender", 0))
+            gender_choice = st.segmented_control(
                 "Gender",
                 options=["Female", "Male"],
-                default="Female" if st.session_state.get("Gender", 0) == 0 else "Male"
+                default="Female" if gender_current == 0 else "Male",
+                key="seg_gender"
             )
-            st.session_state["Gender"] = 1 if gender_val == "Male" else 0
+            st.session_state["student_profile"]["Gender"] = 1 if gender_choice == "Male" else 0
 
             course_options = specs["Course"]["options"]
-            current_course = int(st.session_state.get("Course", course_options[0]))
-            st.session_state["Course"] = st.selectbox(
+            cur_course = int(st.session_state["student_profile"].get("Course", course_options[0]))
+            st.session_state["student_profile"]["Course"] = st.selectbox(
                 "Degree Programme",
                 options=course_options,
-                index=course_options.index(current_course) if current_course in course_options else 0,
-                format_func=lambda c: map_label(COURSE_MAP, c, "Course Code")
+                index=course_options.index(cur_course) if cur_course in course_options else 0,
+                format_func=lambda c: map_label(COURSE_MAP, c, "Course"),
+                key="inp_Course"
             )
 
-            st.session_state["Admission grade"] = st.slider(
+            st.session_state["student_profile"]["Admission grade"] = st.slider(
                 "Admission Grade (0–200)", 0.0, 200.0,
-                value=float(st.session_state.get("Admission grade", 125.0)), step=0.5
+                value=float(st.session_state["student_profile"].get("Admission grade", 125.0)), step=0.5,
+                key="inp_Admission grade"
             )
-
-            st.session_state["Previous qualification (grade)"] = st.slider(
+            st.session_state["student_profile"]["Previous qualification (grade)"] = st.slider(
                 "Previous Qualification Grade (0–200)", 0.0, 200.0,
-                value=float(st.session_state.get("Previous qualification (grade)", 130.0)), step=0.5
+                value=float(st.session_state["student_profile"].get("Previous qualification (grade)", 130.0)), step=0.5,
+                key="inp_Previous qualification (grade)"
             )
 
-            with st.expander("Family Qualifications & Background"):
+            with st.expander("Family & Background Details"):
                 app_options = specs["Application mode"]["options"]
-                cur_app = int(st.session_state.get("Application mode", app_options[0]))
-                st.session_state["Application mode"] = st.selectbox(
+                cur_app = int(st.session_state["student_profile"].get("Application mode", app_options[0]))
+                st.session_state["student_profile"]["Application mode"] = st.selectbox(
                     "Application Mode",
                     options=app_options,
                     index=app_options.index(cur_app) if cur_app in app_options else 0,
-                    format_func=lambda a: map_label(APPLICATION_MODE_MAP, a, "Mode")
+                    format_func=lambda a: map_label(APPLICATION_MODE_MAP, a, "Mode"),
+                    key="inp_Application mode"
                 )
 
                 mq_options = specs["Mother's qualification"]["options"]
-                cur_mq = int(st.session_state.get("Mother's qualification", mq_options[0]))
-                st.session_state["Mother's qualification"] = st.selectbox(
+                cur_mq = int(st.session_state["student_profile"].get("Mother's qualification", mq_options[0]))
+                st.session_state["student_profile"]["Mother's qualification"] = st.selectbox(
                     "Mother's Qualification",
                     options=mq_options,
                     index=mq_options.index(cur_mq) if cur_mq in mq_options else 0,
-                    format_func=lambda q: map_label(PARENT_QUAL_MAP, q, "Qual")
+                    format_func=lambda q: map_label(PARENT_QUAL_MAP, q, "Qual"),
+                    key="inp_Mothers qualification"
                 )
 
                 fq_options = specs["Father's qualification"]["options"]
-                cur_fq = int(st.session_state.get("Father's qualification", fq_options[0]))
-                st.session_state["Father's qualification"] = st.selectbox(
+                cur_fq = int(st.session_state["student_profile"].get("Father's qualification", fq_options[0]))
+                st.session_state["student_profile"]["Father's qualification"] = st.selectbox(
                     "Father's Qualification",
                     options=fq_options,
                     index=fq_options.index(cur_fq) if cur_fq in fq_options else 0,
-                    format_func=lambda q: map_label(PARENT_QUAL_MAP, q, "Qual")
-                )
-
-                mo_options = specs["Mother's occupation"]["options"]
-                cur_mo = int(st.session_state.get("Mother's occupation", mo_options[0]))
-                st.session_state["Mother's occupation"] = st.selectbox(
-                    "Mother's Occupation",
-                    options=mo_options,
-                    index=mo_options.index(cur_mo) if cur_mo in mo_options else 0,
-                    format_func=lambda o: map_label(PARENT_OCC_MAP, o, "Occ")
+                    format_func=lambda q: map_label(PARENT_QUAL_MAP, q, "Qual"),
+                    key="inp_Fathers qualification"
                 )
 
 # ==============================================================================
 # TAB 3: WHAT-IF INTERVENTION LAB
 # ==============================================================================
 with tab_simulator:
-    st.markdown("### 🧪 What-If Counterfactual Intervention Lab")
-    st.caption("Simulate hypothetical mentorship interventions to evaluate their predicted risk reduction before deploying institutional resources.")
+    st.markdown("### What-If Intervention Lab")
+    st.caption("Simulate hypothetical mentoring interventions. The system enforces logical academic constraints.")
 
     sim_values = dict(current_values)
+    base_enrolled = sim_values.get("Curricular units 1st sem (enrolled)", 0)
+    base_approved = sim_values.get("Curricular units 1st sem (approved)", 0)
 
     col_sim_controls, col_sim_results = st.columns([1, 1])
 
     with col_sim_controls:
         with st.container(border=True):
-            st.markdown("#### 🛠️ Configure Intervention Package")
+            st.markdown("#### Configure Interventions")
 
-            tutoring_boost = st.slider(
-                "Tutoring Impact: Additional Approved Units",
-                0, 4, value=1,
-                help="Simulate the student passing extra curricular units due to academic mentoring."
+            if base_enrolled == 0:
+                st.warning("⚠️ Baseline enrolled units is 0. Student must be matriculated in units to simulate tutoring.")
+                tutoring_boost = 0
+            else:
+                max_possible_boost = max(0, base_enrolled - base_approved)
+                if max_possible_boost == 0:
+                    st.info(f"Student has already passed all {base_enrolled} enrolled units.")
+                    tutoring_boost = 0
+                else:
+                    tutoring_boost = st.slider(
+                        f"Tutoring: Convert Failed Units to Passed (Max: {max_possible_boost})",
+                        0, max_possible_boost, value=min(1, max_possible_boost),
+                        help="Converts unapproved enrolled units into approved units."
+                    )
+            
+            sim_values["Curricular units 1st sem (approved)"] = base_approved + tutoring_boost
+            # Enforce evaluations >= approved
+            sim_values["Curricular units 1st sem (evaluations)"] = max(
+                sim_values.get("Curricular units 1st sem (evaluations)", 0),
+                sim_values["Curricular units 1st sem (approved)"]
             )
-            sim_values["Curricular units 1st sem (approved)"] = min(
-                26, sim_values.get("Curricular units 1st sem (approved)", 0) + tutoring_boost
-            )
+            # If approved units increased from 0, assign at least passing grade (10.0)
+            if sim_values["Curricular units 1st sem (approved)"] > 0 and sim_values.get("Curricular units 1st sem (grade)", 0.0) < 10.0:
+                sim_values["Curricular units 1st sem (grade)"] = 11.5
 
             grant_relief = st.toggle(
-                "Emergency Hardship Grant: Settle Overdue Tuition & Debt",
+                "Emergency Hardship Grant: Clear Unpaid Tuition & Debts",
                 value=(sim_values.get("Tuition fees up to date", 1) == 0 or sim_values.get("Debtor", 0) == 1),
-                help="Simulate clearing institutional debts and bringing tuition payments up to date."
+                help="Simulates settling outstanding tuition and clearing institutional debts."
             )
             if grant_relief:
                 sim_values["Tuition fees up to date"] = 1
                 sim_values["Debtor"] = 0
 
             grade_boost = st.slider(
-                "Study Workshop: GPA Improvement (Points)",
-                0.0, 4.0, value=1.5, step=0.5,
-                help="Simulate an increase in academic grade average."
+                "Study Workshop: GPA Improvement (Points on 0–20 Scale)",
+                0.0, 4.0, value=1.0, step=0.5,
+                help="Simulates grade improvement through study skills mentorship."
             )
             sim_values["Curricular units 1st sem (grade)"] = min(
                 20.0, sim_values.get("Curricular units 1st sem (grade)", 0.0) + grade_boost
+            )
+
+            st.caption(
+                f"Validation guarantee: Approved ({sim_values['Curricular units 1st sem (approved)']}) "
+                f"≤ Evaluations ({sim_values['Curricular units 1st sem (evaluations)']}) "
+                f"≤ Enrolled ({sim_values['Curricular units 1st sem (enrolled)']})"
             )
 
     # Score simulated student
@@ -730,41 +940,39 @@ with tab_simulator:
 
     with col_sim_results:
         with st.container(border=True):
-            st.markdown("#### 📈 Predicted Intervention Impact")
+            st.markdown("#### Predicted Intervention Impact")
 
             col_before, col_after = st.columns(2)
             with col_before:
-                st.metric("Baseline Risk", f"{risk:.1%}", tier_name)
+                st.metric("Baseline Risk", f"{risk:.1%}")
+                st.markdown(f"Status: **{tier_name} Risk**")
             with col_after:
-                st.metric(
-                    "Post-Intervention Risk",
-                    f"{sim_risk:.1%}",
-                    delta=f"{risk_diff:+.1%}",
-                    delta_color="inverse"
-                )
+                st.metric("Post-Intervention Risk", f"{sim_risk:.1%}")
+                st.markdown(f"New Status: **{sim_tier} Risk**")
 
+            st.markdown("---")
             if risk_diff < -0.05:
                 st.success(
-                    f"🎉 **Positive Trajectory:** Intervention reduces attrition probability by **{abs(risk_diff):.1%}**, "
-                    f"shifting student from **{tier_name} Risk** to **{sim_tier} Risk**!"
+                    f"Intervention reduces predicted dropout risk by **{abs(risk_diff):.1%}** "
+                    f"(from {risk:.1%} down to {sim_risk:.1%})."
                 )
             elif risk_diff >= 0:
-                st.info("ℹ️ Configured parameters produced no significant risk reduction.")
+                st.info("No significant risk reduction with current intervention parameters.")
             else:
-                st.warning(f"Modest risk reduction of {abs(risk_diff):.1%}. Additional support required.")
+                st.warning(f"Modest risk reduction of {abs(risk_diff):.1%}.")
 
 # ==============================================================================
 # TAB 4: MODEL GOVERNANCE & FAIRNESS AUDIT
 # ==============================================================================
 with tab_audit:
-    st.markdown("### 🛡️ Algorithmic Governance, Fairness & Holdout Test Audit")
+    st.markdown("### Algorithmic Governance, Fairness & Holdout Test Audit")
     st.caption("Rigorous single-pass test set evaluation on 885 completely unobserved students, with subgroup fairness diagnostics.")
 
     col_gov1, col_gov2 = st.columns(2)
 
     with col_gov1:
         with st.container(border=True):
-            st.markdown("#### 📊 Empirical Holdout Test Benchmarks")
+            st.markdown("#### Holdout Test Benchmarks (885 Students)")
             st.markdown(
                 """
                 | Metric | Early-Warning (Sem 1) | Full Curriculum |
@@ -774,14 +982,15 @@ with tab_audit:
                 | **Dropout PR-AUC** | **0.844** | **0.872** |
                 | **Dropout Recall** | **89.4%** (254/284) | **86.6%** (246/284) |
                 | **Dropout Precision** | **59.3%** | **64.2%** |
-                | **Cost Reduction vs Unflagged** | **77.2%** | **77.0%** |
+                | **Cost Reduction vs Flag Nobody** | **77.2%** | **77.0%** |
+                | **Cost Reduction vs Flag All** | **~46.0%** | **~44.0%** |
                 """
             )
-            st.caption("Evaluated strictly once at Phase 5 conclusion. No post-hoc tuning on test data.")
+            st.caption("Evaluated strictly once at Phase 5 conclusion. Zero post-hoc tuning on test data.")
 
     with col_gov2:
         with st.container(border=True):
-            st.markdown("#### ⚖️ Subgroup Fairness Audit (Early Model)")
+            st.markdown("#### Subgroup Fairness Audit (Early Model)")
             st.markdown(
                 """
                 - **Scholarship Disparity:** Scholarship holders have lower base dropout rates (9.3% vs 39.0%), resulting in lower recall (**63.2%** vs **91.3%**). Mentors should not rely solely on automated alerts for scholarship recipients.
@@ -792,7 +1001,7 @@ with tab_audit:
             )
 
     with st.container(border=True):
-        st.markdown("#### 📜 Ethical Decision-Support Charter")
+        st.markdown("#### Ethical Decision-Support Charter")
         st.markdown(
             """
             1. **Supportive, Not Punitive:** This tool exists exclusively to allocate support, tutoring, and counseling—never to disqualify, dismiss, or deny enrollment.
