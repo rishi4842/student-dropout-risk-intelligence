@@ -534,6 +534,11 @@ def render_student_context():
     )
 
 
+# ------------------------------------------------------------------ GLOBAL CONTEXT BAR
+render_student_context()
+render_context_controls()
+st.markdown("---")
+
 # ==============================================================================
 # TABBED NAVIGATION
 # ==============================================================================
@@ -548,11 +553,6 @@ tab_risk, tab_profile, tab_whatif, tab_gov = st.tabs([
 # TAB 1: RISK ASSESSMENT
 # ==============================================================================
 with tab_risk:
-    render_student_context()
-    render_context_controls()
-
-    st.markdown("---")
-
     # ---- Primary Risk KPI + Risk Spectrum ----
     col_kpi, col_profile = st.columns([5, 7], gap="large")
 
@@ -751,11 +751,6 @@ with tab_risk:
 # TAB 2: STUDENT PROFILE
 # ==============================================================================
 with tab_profile:
-    render_student_context()
-    render_context_controls()
-
-    st.markdown("---")
-
     def mark_custom():
         st.session_state["_active_persona"] = "Custom Input"
         st.session_state["_outcome"] = None
@@ -1001,11 +996,6 @@ with tab_profile:
 # TAB 3: WHAT-IF LAB
 # ==============================================================================
 with tab_whatif:
-    render_student_context()
-    render_context_controls()
-
-    st.markdown("---")
-
     sim_values = dict(current_values)
     base_enrolled = int(sim_values.get("Curricular units 1st sem (enrolled)", 0))
     base_approved = int(sim_values.get("Curricular units 1st sem (approved)", 0))
