@@ -30,6 +30,106 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
+# ------------------------------------------------------------------ GLOBAL CSS
+st.html("""
+<style>
+/* Hide default sidebar hamburger */
+[data-testid="stSidebarCollapsedControl"] { display: none !important; }
+
+/* Tighten main content padding */
+.block-container { padding-top: 1rem !important; padding-bottom: 2rem !important; max-width: 1200px !important; }
+
+/* Brand bar styling */
+.ri-brand { display: flex; align-items: center; gap: 10px; }
+.ri-brand-icon { width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, #2563EB, #1D4ED8); display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; font-weight: 700; flex-shrink: 0; }
+.ri-brand-text { line-height: 1.25; }
+.ri-brand-name { font-size: 15px; font-weight: 700; color: #0F172A; letter-spacing: -0.01em; }
+.ri-brand-sub { font-size: 11px; color: #64748B; font-weight: 500; }
+.ri-status { text-align: right; font-size: 12px; color: #64748B; line-height: 1.4; }
+.ri-status-dot { color: #16A34A; font-weight: 600; }
+
+/* Risk hero */
+.ri-risk-hero { margin: 4px 0 12px 0; }
+.ri-risk-value { font-size: 56px; font-weight: 800; line-height: 1.0; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.ri-risk-low { color: #16A34A; }
+.ri-risk-med { color: #D97706; }
+.ri-risk-high { color: #DC2626; }
+
+/* Impact comparison */
+.ri-impact { display: flex; align-items: center; gap: 24px; margin: 12px 0; }
+.ri-impact-block label { font-size: 11px; color: #64748B; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; display: block; margin-bottom: 2px; }
+.ri-impact-val { font-size: 36px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.ri-impact-tier { font-size: 12px; color: #64748B; margin-top: 2px; }
+.ri-arrow { font-size: 28px; color: #94A3B8; }
+
+/* Spectrum bar */
+.ri-spectrum { margin: 8px 0 20px 0; }
+.ri-spectrum-labels { display: flex; width: 100%; font-size: 11px; color: #64748B; margin-bottom: 6px; font-weight: 600; }
+.ri-spectrum-labels span { font-weight: 400; }
+.ri-spectrum-bar { position: relative; display: flex; width: 100%; height: 8px; border-radius: 4px; }
+.ri-spectrum-safe { background: #16A34A; border-radius: 4px 0 0 4px; }
+.ri-spectrum-watch { background: #D97706; }
+.ri-spectrum-crit { background: #DC2626; border-radius: 0 4px 4px 0; }
+.ri-spectrum-pin { position: absolute; top: -6px; transform: translateX(-50%); width: 4px; height: 20px; background: #0F172A; border: 2px solid #FFFFFF; border-radius: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+.ri-spectrum-pos { margin-top: 8px; font-size: 12px; color: #64748B; }
+
+/* Probability bars */
+.ri-prob-row { opacity: 0.72; margin-bottom: 10px; }
+.ri-prob-row.top { opacity: 1.0; }
+.ri-prob-header { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
+.ri-prob-name { font-weight: 500; }
+.ri-prob-name.top { font-weight: 700; }
+.ri-prob-val { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+.ri-prob-track { width: 100%; height: 7px; background: rgba(100,116,139,0.12); border-radius: 4px; overflow: hidden; }
+.ri-prob-fill { height: 100%; border-radius: 4px; }
+
+/* Section headers */
+.ri-section-label { font-size: 11px; font-weight: 600; color: #64748B; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+
+/* Student context strip */
+.ri-context { font-size: 13px; color: #475569; margin: 2px 0 8px 0; }
+.ri-context strong { color: #0F172A; font-weight: 600; }
+.ri-context .sep { color: #CBD5E1; margin: 0 6px; }
+
+/* Fairness card */
+.ri-fairness { padding: 12px 16px; border-left: 3px solid #E2E8F0; margin-bottom: 12px; }
+.ri-fairness-title { font-weight: 600; font-size: 14px; color: #0F172A; }
+.ri-fairness-metric { font-size: 12px; color: #64748B; margin-top: 2px; }
+.ri-fairness-obs { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #334155; margin-top: 6px; }
+.ri-fairness-interp { font-size: 13px; color: #475569; margin-top: 4px; line-height: 1.5; }
+
+/* Principle cards */
+.ri-principle { padding: 16px; border: 1px solid #E2E8F0; border-radius: 8px; margin-bottom: 12px; }
+.ri-principle-num { font-size: 20px; font-weight: 700; color: #2563EB; margin-bottom: 4px; }
+.ri-principle-title { font-size: 14px; font-weight: 600; color: #0F172A; margin-bottom: 6px; }
+.ri-principle-desc { font-size: 13px; color: #475569; line-height: 1.5; }
+
+/* Performance strip */
+.ri-perf { font-size: 12px; color: #64748B; padding: 8px 0; }
+.ri-perf strong { color: #334155; font-weight: 600; }
+
+/* Dark mode overrides */
+@media (prefers-color-scheme: dark) {
+    .ri-brand-name { color: #F8FAFC; }
+    .ri-brand-icon { background: linear-gradient(135deg, #3B82F6, #2563EB); }
+    .ri-risk-low { color: #10B981; }
+    .ri-risk-med { color: #F59E0B; }
+    .ri-risk-high { color: #EF4444; }
+    .ri-context { color: #94A3B8; }
+    .ri-context strong { color: #F8FAFC; }
+    .ri-context .sep { color: #334155; }
+    .ri-fairness { border-left-color: #334155; }
+    .ri-fairness-title { color: #F8FAFC; }
+    .ri-fairness-obs { color: #E2E8F0; }
+    .ri-fairness-interp { color: #94A3B8; }
+    .ri-principle { border-color: #1E293B; }
+    .ri-principle-title { color: #F8FAFC; }
+    .ri-principle-desc { color: #94A3B8; }
+    .ri-spectrum-pin { background: #F8FAFC; border-color: #0F172A; }
+}
+</style>
+""")
+
 # ------------------------------------------------------------------ DOMAIN MAPS
 COURSE_MAP = {
     33: "Biofuel Production Technologies",
@@ -284,49 +384,31 @@ def get_data():
 
 df = get_data()
 
-# ------------------------------------------------------------------ TOP NAVIGATION BAR (NO SIDEBAR)
+# ------------------------------------------------------------------ SESSION STATE
 st.session_state.setdefault("_model_tag", "early")
-st.session_state.setdefault("_nav_page", "Risk Assessment")
 st.session_state.setdefault("_outcome", None)
 st.session_state.setdefault("_active_persona", "Custom Input")
 
-nav_col_brand, nav_col_links, nav_col_status = st.columns([3, 6, 3], vertical_alignment="center")
-
-with nav_col_brand:
-    st.markdown(
-        "<div style='line-height:1.25;'>"
-        "<span style='font-size:15px; font-weight:700;'>:material/school: Retention Intelligence</span><br/>"
-        "<span style='font-size:11px; color:#64748B;'>Student Success Analytics</span>"
-        "</div>",
-        unsafe_allow_html=False,
+# ------------------------------------------------------------------ HEADER BAR
+hdr_left, hdr_right = st.columns([7, 5], vertical_alignment="center")
+with hdr_left:
+    st.html(
+        '<div class="ri-brand">'
+        '<div class="ri-brand-icon">RI</div>'
+        '<div class="ri-brand-text">'
+        '<div class="ri-brand-name">Retention Intelligence</div>'
+        '<div class="ri-brand-sub">Student Success Analytics</div>'
+        '</div></div>'
+    )
+with hdr_right:
+    st.html(
+        '<div class="ri-status">'
+        '<span class="ri-status-dot">&#9679; Model Active</span> · v1.0<br/>'
+        'Holdout: 885 students'
+        '</div>'
     )
 
-with nav_col_links:
-    nav_page = st.segmented_control(
-        "Primary navigation",
-        options=["Risk Assessment", "Student Profile", "What-If Lab", "Governance"],
-        default=st.session_state["_nav_page"],
-        label_visibility="collapsed",
-        width="stretch",
-        key="top_nav_control",
-    )
-    if nav_page:
-        st.session_state["_nav_page"] = nav_page
-    else:
-        nav_page = st.session_state["_nav_page"]
-
-with nav_col_status:
-    st.markdown(
-        "<div style='text-align:right; font-size:12px; color:#64748B; line-height:1.35;'>"
-        "<span style='color:#16A34A; font-weight:600;'>&#9679; Model Active</span> · Model v1.0<br/>"
-        "Holdout: 885 students"
-        "</div>",
-        unsafe_allow_html=True,
-    )
-
-st.divider()
-
-# ------------------------------------------------------------------ LOAD ARTIFACTS & STATE
+# ------------------------------------------------------------------ LOAD ARTIFACTS
 selected_tag = st.session_state["_model_tag"]
 art = get_artifacts("xgboost", selected_tag)
 features = art.features
@@ -371,8 +453,9 @@ res_path = ROOT / "reports" / f"test_results_xgboost_{selected_tag}.json"
 res_data = json.load(open(res_path)) if res_path.exists() else {}
 
 
+# ------------------------------------------------------------------ CONTEXT CONTROLS
 def render_context_controls():
-    """Compact contextual control bar (replaces permanent sidebar controls)."""
+    """Compact controls: model scope, student preset, actions."""
     c_scope, c_profile, c_actions = st.columns([4, 5, 2], vertical_alignment="bottom")
     with c_scope:
         st.caption("MODEL SCOPE")
@@ -414,8 +497,8 @@ def render_context_controls():
             st.rerun()
 
     with c_actions:
-        with st.popover("Actions", width="stretch"):
-            if st.button("Sample student", icon=":material/shuffle:", width="stretch"):
+        with st.popover(":material/more_horiz: Actions"):
+            if st.button("Sample random student", icon=":material/shuffle:", use_container_width=True):
                 vals, outcome = random_student(df, features)
                 for f in features:
                     tv = typed(specs[f], vals[f])
@@ -424,7 +507,7 @@ def render_context_controls():
                 st.session_state["_outcome"] = outcome
                 st.session_state["_active_persona"] = "Custom Input"
                 st.rerun()
-            if st.button("Reset profile", icon=":material/restart_alt:", width="stretch"):
+            if st.button("Reset to defaults", icon=":material/restart_alt:", use_container_width=True):
                 for f in features:
                     tv = typed(specs[f], specs[f]["default"])
                     st.session_state["student_profile"][f] = tv
@@ -434,119 +517,130 @@ def render_context_controls():
                 st.rerun()
 
 
-# ==============================================================================
-# PAGE 1: RISK ASSESSMENT
-# ==============================================================================
-if nav_page == "Risk Assessment":
-    st.caption(f"Retention Intelligence / Risk Assessment")
-    st.title("Risk Assessment")
-    st.caption("Identify early signs of student attrition and understand the factors driving the prediction.")
-
+def render_student_context():
+    """Show current student context strip."""
     course_name = map_label(COURSE_MAP, current_values.get("Course", 9500), "Course")
     age_val = int(current_values.get("Age at enrollment", 20))
-    sem_label = "Semester 1" if selected_tag == "early" else "Semesters 1 & 2"
-    st.markdown(
-        f"**Student:** {st.session_state['_active_persona']} &nbsp;·&nbsp; "
-        f"{course_name} &nbsp;·&nbsp; Age {age_val} &nbsp;·&nbsp; {sem_label}"
-        + (f" &nbsp;·&nbsp; *Recorded: {st.session_state['_outcome']}*" if st.session_state.get("_outcome") else "")
+    sem_label = "Semester 1 only" if selected_tag == "early" else "Semesters 1 & 2"
+    outcome_str = f'<span class="sep">·</span><em>{st.session_state["_outcome"]}</em>' if st.session_state.get("_outcome") else ""
+    st.html(
+        f'<div class="ri-context">'
+        f'<strong>{st.session_state["_active_persona"]}</strong>'
+        f'<span class="sep">·</span>{course_name}'
+        f'<span class="sep">·</span>Age {age_val}'
+        f'<span class="sep">·</span>{sem_label}'
+        f'{outcome_str}'
+        f'</div>'
     )
 
-    render_context_controls()
-    st.divider()
 
-    # Primary Risk Area
+# ==============================================================================
+# TABBED NAVIGATION
+# ==============================================================================
+tab_risk, tab_profile, tab_whatif, tab_gov = st.tabs([
+    ":material/monitoring: Risk Assessment",
+    ":material/person: Student Profile",
+    ":material/science: What-If Lab",
+    ":material/verified_user: Governance",
+])
+
+# ==============================================================================
+# TAB 1: RISK ASSESSMENT
+# ==============================================================================
+with tab_risk:
+    render_student_context()
+    render_context_controls()
+
+    st.markdown("---")
+
+    # ---- Primary Risk KPI + Risk Spectrum ----
     col_kpi, col_profile = st.columns([5, 7], gap="large")
 
     with col_kpi:
         with st.container(border=True):
-            st.caption("ATTRITION RISK")
-            tier_color = "#DC2626" if tier_name == "High" else ("#D97706" if tier_name == "Medium" else "#16A34A")
+            st.html('<div class="ri-section-label">ATTRITION RISK</div>')
+            tier_css = "ri-risk-high" if tier_name == "High" else ("ri-risk-med" if tier_name == "Medium" else "ri-risk-low")
+            st.html(
+                f'<div class="ri-risk-hero">'
+                f'<div class="ri-risk-value {tier_css}">{risk:.1%}</div>'
+                f'</div>'
+            )
             badge_md = (
                 ":red-badge[HIGH RISK]"
                 if tier_name == "High"
                 else (":orange-badge[MEDIUM RISK]" if tier_name == "Medium" else ":green-badge[LOW RISK]")
             )
-            st.markdown(
-                f"<div style='font-size:48px; font-weight:700; line-height:1.1; color:{tier_color}; margin:4px 0 8px 0;'>"
-                f"{risk:.1%}</div>",
-                unsafe_allow_html=True,
-            )
             st.markdown(badge_md)
             st.write(
-                "Student is currently above the intervention threshold."
+                "Student is currently **above** the intervention threshold."
                 if risk >= t
-                else "Student is currently below the intervention threshold."
+                else "Student is currently **below** the intervention threshold."
             )
 
-            gap_pp = (risk - t) * 100.0
             m1, m2 = st.columns(2)
             with m1:
-                st.caption("Operational threshold")
-                st.markdown(f"**{t:.0%}**")
+                st.metric("Operational threshold", f"{t:.0%}")
             with m2:
-                st.caption("Risk gap")
-                st.markdown(f"**{gap_pp:+.1f} percentage points**")
+                gap_pp = (risk - t) * 100.0
+                st.metric("Risk gap", f"{gap_pp:+.1f} pp")
 
     with col_profile:
-        st.caption("RISK PROFILE")
+        st.html('<div class="ri-section-label">RISK PROFILE</div>')
         pos_pct = min(max(risk * 100.0, 0.0), 100.0)
         t_pct = int(round(t * 100))
         high_pct = int(round(HIGH_TIER * 100))
 
-        spectrum_html = f"""
-        <div style="margin: 6px 0 18px 0;">
-          <div style="display:flex; width:100%; font-size:11px; color:#64748B; margin-bottom:6px; font-weight:600;">
-            <div style="width:{t_pct}%;">SAFE<br/><span style="font-weight:400;">0–{t_pct}%</span></div>
-            <div style="width:{high_pct - t_pct}%;">WATCH<br/><span style="font-weight:400;">{t_pct}–{high_pct}%</span></div>
-            <div style="width:{100 - high_pct}%;">CRITICAL<br/><span style="font-weight:400;">{high_pct}–100%</span></div>
+        st.html(f"""
+        <div class="ri-spectrum">
+          <div class="ri-spectrum-labels">
+            <div style="width:{t_pct}%;">SAFE<br/><span>0–{t_pct}%</span></div>
+            <div style="width:{high_pct - t_pct}%;">WATCH<br/><span>{t_pct}–{high_pct}%</span></div>
+            <div style="width:{100 - high_pct}%;">CRITICAL<br/><span>{high_pct}–100%</span></div>
           </div>
-          <div style="position:relative; display:flex; width:100%; height:8px; border-radius:4px;">
-            <div style="width:{t_pct}%; background:#16A34A; border-radius:4px 0 0 4px;"></div>
-            <div style="width:{high_pct - t_pct}%; background:#D97706;"></div>
-            <div style="width:{100 - high_pct}%; background:#DC2626; border-radius:0 4px 4px 0;"></div>
-            <div style="position:absolute; left:{pos_pct:.1f}%; top:-5px; transform:translateX(-50%); width:4px; height:18px; background:#0F172A; border:1px solid #FFFFFF; border-radius:2px;"></div>
+          <div class="ri-spectrum-bar">
+            <div class="ri-spectrum-safe" style="width:{t_pct}%;"></div>
+            <div class="ri-spectrum-watch" style="width:{high_pct - t_pct}%;"></div>
+            <div class="ri-spectrum-crit" style="width:{100 - high_pct}%;"></div>
+            <div class="ri-spectrum-pin" style="left:{pos_pct:.1f}%;"></div>
           </div>
-          <div style="margin-top:8px; font-size:12px; color:#64748B;">
-            &#9679; Student position: <strong style="color:inherit;">{risk:.1%}</strong> &nbsp;·&nbsp; Status: <strong style="color:inherit;">{tier_name} Risk</strong>
+          <div class="ri-spectrum-pos">
+            &#9679; Student position: <strong>{risk:.1%}</strong> &nbsp;·&nbsp; Status: <strong>{tier_name} Risk</strong>
           </div>
         </div>
-        """
-        st.html(spectrum_html)
+        """)
 
-        st.caption("MULTICLASS PROBABILITY")
+        st.html('<div class="ri-section-label">MULTICLASS PROBABILITY</div>')
         outcomes = [
             ("Graduate", p_grad_norm, "#16A34A"),
             ("Persist", p_enr_norm, "#2563EB"),
             ("Dropout", p_drop_norm, "#DC2626"),
         ]
         top_outcome = max(outcomes, key=lambda x: x[1])[0]
-        bars_html = "<div style='display:flex; flex-direction:column; gap:10px; margin-top:4px;'>"
+        bars_html = ""
         for name, val, col in outcomes:
             is_top = name == top_outcome
-            weight = "700" if is_top else "500"
-            opacity = "1.0" if is_top else "0.72"
+            top_cls = " top" if is_top else ""
             w_pct = max(val * 100.0, 1.5)
             bars_html += f"""
-            <div style="opacity:{opacity};">
-              <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:{weight}; margin-bottom:4px;">
-                <span>{name}</span>
-                <span style="font-family:monospace;">{val:.1%}</span>
+            <div class="ri-prob-row{top_cls}">
+              <div class="ri-prob-header">
+                <span class="ri-prob-name{top_cls}">{name}</span>
+                <span class="ri-prob-val">{val:.1%}</span>
               </div>
-              <div style="width:100%; height:7px; background:rgba(100,116,139,0.16); border-radius:4px; overflow:hidden;">
-                <div style="width:{w_pct:.1f}%; height:100%; background:{col}; border-radius:4px;"></div>
+              <div class="ri-prob-track">
+                <div class="ri-prob-fill" style="width:{w_pct:.1f}%; background:{col};"></div>
               </div>
             </div>
             """
-        bars_html += "</div>"
         st.html(bars_html)
 
-    st.divider()
+    st.markdown("---")
 
-    # Explanation (Why?) + Advisor Action (Decision)
+    # ---- Explanation + Advisor Action ----
     col_adv, col_shap = st.columns([5, 7], gap="large")
 
     with col_adv:
-        st.caption("RECOMMENDED ADVISOR ACTION")
+        st.html('<div class="ri-section-label">RECOMMENDED ADVISOR ACTION</div>')
         if tier_name == "High":
             st.markdown("#### Priority 1-on-1 outreach required")
         elif tier_name == "Medium":
@@ -561,7 +655,7 @@ if nav_page == "Risk Assessment":
         approved_u = int(current_values.get("Curricular units 1st sem (approved)", 0))
         grade_u = float(current_values.get("Curricular units 1st sem (grade)", 0.0))
 
-        st.caption("RECOMMENDED TALKING POINTS")
+        st.html('<div class="ri-section-label" style="margin-top:16px;">RECOMMENDED TALKING POINTS</div>')
         if enrolled_u == 0:
             st.markdown("**Registration status**  \n0 of 0 units enrolled in Semester 1. Verify administrative holds or leave status.")
         elif approved_u < enrolled_u:
@@ -573,12 +667,12 @@ if nav_page == "Risk Assessment":
             st.markdown("**Financial support**  \nOverdue tuition detected. Review emergency hardship aid or installment options.")
         if int(current_values.get("Debtor", 0)) == 1:
             st.markdown("**Account balance**  \nInstitutional debt recorded. Coordinate with student finance office.")
-        if int(current_values.get("Daytime/evening attendance", 1)) == 0 or age_val > 25:
+        if int(current_values.get("Daytime/evening attendance", 1)) == 0 or int(current_values.get("Age at enrollment", 20)) > 25:
             st.markdown("**Attendance & schedule**  \nReview evening or work-study balance and flexible advising hours.")
 
     with col_shap:
-        st.caption("WHY THIS PREDICTION?")
-        st.caption("Model explanation for this student's dropout risk.")
+        st.html('<div class="ri-section-label">WHY THIS PREDICTION?</div>')
+        st.caption("How individual features influenced the model's dropout score.")
 
         contrib = result["contributions"]
         top_k = contrib.head(8)
@@ -590,13 +684,13 @@ if nav_page == "Risk Assessment":
             plot_items.append({
                 "Feature": friendly_feature_label(f, val),
                 "Impact": float(top_k[f]),
-                "Direction": "Factors increasing risk" if top_k[f] > 0 else "Factors reducing risk",
+                "Direction": "Increases risk" if top_k[f] > 0 else "Reduces risk",
             })
         if len(contrib) > 8:
             plot_items.append({
                 "Feature": f"{len(contrib) - 8} other features",
                 "Impact": rest_sum,
-                "Direction": "Factors increasing risk" if rest_sum > 0 else "Factors reducing risk",
+                "Direction": "Increases risk" if rest_sum > 0 else "Reduces risk",
             })
 
         df_shap = pd.DataFrame(plot_items)
@@ -614,7 +708,7 @@ if nav_page == "Risk Assessment":
                 color=alt.Color(
                     "Direction:N",
                     scale=alt.Scale(
-                        domain=["Factors increasing risk", "Factors reducing risk"],
+                        domain=["Increases risk", "Reduces risk"],
                         range=["#DC2626", "#2563EB"],
                     ),
                     legend=alt.Legend(orient="top", title=None),
@@ -627,8 +721,9 @@ if nav_page == "Risk Assessment":
             )
             .properties(height=300)
         )
-        st.altair_chart(chart, width="stretch")
-        st.caption("These factors show how individual features influenced the model's dropout score (associations in the data, not causes).")
+        st.altair_chart(chart, use_container_width=True)
+
+        st.caption("Associations in the data, not causal effects.")
 
         up_changes, down_changes = top_changes(contrib, current_values)
         f_up, f_down = st.columns(2)
@@ -639,26 +734,27 @@ if nav_page == "Risk Assessment":
             st.caption("Factors reducing risk")
             st.write(", ".join(down_changes) if down_changes else "None")
 
-    st.divider()
+    # ---- Performance strip ----
     if res_data:
-        st.caption(
-            f"MODEL PERFORMANCE &nbsp;·&nbsp; "
-            f"ROC-AUC **{res_data['dropout_roc_auc']:.3f}** &nbsp;|&nbsp; "
-            f"Recall **{res_data['at_chosen_threshold']['recall']:.1%}** &nbsp;|&nbsp; "
-            f"Threshold **{t:.0%}** &nbsp;|&nbsp; "
-            f"Holdout **{res_data['n_test']}**"
+        st.markdown("---")
+        st.html(
+            f'<div class="ri-perf">'
+            f'MODEL PERFORMANCE &nbsp;·&nbsp; '
+            f'ROC-AUC <strong>{res_data["dropout_roc_auc"]:.3f}</strong> &nbsp;|&nbsp; '
+            f'Recall <strong>{res_data["at_chosen_threshold"]["recall"]:.1%}</strong> &nbsp;|&nbsp; '
+            f'Threshold <strong>{t:.0%}</strong> &nbsp;|&nbsp; '
+            f'Holdout <strong>{res_data["n_test"]}</strong>'
+            f'</div>'
         )
 
 # ==============================================================================
-# PAGE 2: STUDENT PROFILE
+# TAB 2: STUDENT PROFILE
 # ==============================================================================
-elif nav_page == "Student Profile":
-    st.caption("Retention Intelligence / Student Profile")
-    st.title("Student Profile")
-    st.caption("Configure the academic, financial, enrollment and demographic information used by the model.")
-
+with tab_profile:
+    render_student_context()
     render_context_controls()
-    st.divider()
+
+    st.markdown("---")
 
     def mark_custom():
         st.session_state["_active_persona"] = "Custom Input"
@@ -667,9 +763,9 @@ elif nav_page == "Student Profile":
     col1, col2 = st.columns(2, gap="large")
 
     with col1:
-        st.caption("ACADEMIC RECORD")
+        st.html('<div class="ri-section-label">ACADEMIC RECORD — SEMESTER 1</div>')
         enr1 = st.slider(
-            "Semester 1 enrolled units", 0, 26,
+            "Enrolled units", 0, 26,
             value=int(st.session_state["student_profile"].get("Curricular units 1st sem (enrolled)", 6)),
             key="inp_Curricular units 1st sem (enrolled)",
             on_change=mark_custom,
@@ -678,7 +774,7 @@ elif nav_page == "Student Profile":
 
         cur_app1 = min(int(st.session_state["student_profile"].get("Curricular units 1st sem (approved)", 5)), enr1)
         app1 = st.slider(
-            "Semester 1 approved units", 0, max(enr1, 1) if enr1 > 0 else 0,
+            "Approved units", 0, max(enr1, 1) if enr1 > 0 else 0,
             value=cur_app1,
             key="inp_Curricular units 1st sem (approved)",
             on_change=mark_custom,
@@ -721,10 +817,10 @@ elif nav_page == "Student Profile":
             st.session_state["student_profile"]["Curricular units 1st sem (without evaluations)"] = wo1
 
         if selected_tag == "full":
-            st.divider()
-            st.caption("SEMESTER 2 RECORD")
+            st.markdown("---")
+            st.html('<div class="ri-section-label">ACADEMIC RECORD — SEMESTER 2</div>')
             enr2 = st.slider(
-                "Semester 2 enrolled units", 0, 26,
+                "Enrolled units (Sem 2)", 0, 26,
                 value=int(st.session_state["student_profile"].get("Curricular units 2nd sem (enrolled)", 6)),
                 key="inp_Curricular units 2nd sem (enrolled)",
                 on_change=mark_custom,
@@ -733,7 +829,7 @@ elif nav_page == "Student Profile":
 
             cur_app2 = min(int(st.session_state["student_profile"].get("Curricular units 2nd sem (approved)", 5)), enr2)
             app2 = st.slider(
-                "Semester 2 approved units", 0, max(enr2, 1) if enr2 > 0 else 0,
+                "Approved units (Sem 2)", 0, max(enr2, 1) if enr2 > 0 else 0,
                 value=cur_app2,
                 key="inp_Curricular units 2nd sem (approved)",
                 on_change=mark_custom,
@@ -741,7 +837,7 @@ elif nav_page == "Student Profile":
             st.session_state["student_profile"]["Curricular units 2nd sem (approved)"] = app2
 
             gr2 = st.slider(
-                "Semester 2 grade average (0–20)", 0.0, 20.0,
+                "Grade average Sem 2 (0–20)", 0.0, 20.0,
                 value=float(st.session_state["student_profile"].get("Curricular units 2nd sem (grade)", 12.5)),
                 step=0.1,
                 key="inp_Curricular units 2nd sem (grade)",
@@ -749,8 +845,8 @@ elif nav_page == "Student Profile":
             )
             st.session_state["student_profile"]["Curricular units 2nd sem (grade)"] = gr2
 
-        st.divider()
-        st.caption("FINANCIAL & ENROLLMENT")
+        st.markdown("---")
+        st.html('<div class="ri-section-label">FINANCIAL & ENROLLMENT</div>')
         f1, f2 = st.columns(2)
         with f1:
             tuition_opt = st.segmented_control(
@@ -799,7 +895,7 @@ elif nav_page == "Student Profile":
             st.session_state["student_profile"]["Displaced"] = 1 if disp_opt == "Displaced" else 0
 
     with col2:
-        st.caption("DEMOGRAPHICS & PROGRAM")
+        st.html('<div class="ri-section-label">DEMOGRAPHICS & PROGRAM</div>')
         age_inp = st.slider(
             "Age at enrollment", 17, 70,
             value=int(st.session_state["student_profile"].get("Age at enrollment", 20)),
@@ -820,7 +916,7 @@ elif nav_page == "Student Profile":
         course_opts = specs["Course"]["options"]
         cur_c = int(st.session_state["student_profile"].get("Course", course_opts[0]))
         c_sel = st.selectbox(
-            "Degree",
+            "Degree program",
             options=course_opts,
             index=course_opts.index(cur_c) if cur_c in course_opts else 0,
             format_func=lambda c: map_label(COURSE_MAP, c, "Course"),
@@ -879,8 +975,8 @@ elif nav_page == "Student Profile":
                 on_change=mark_custom,
             )
 
-        st.divider()
-        st.caption("ECONOMIC CONTEXT")
+        st.markdown("---")
+        st.html('<div class="ri-section-label">ECONOMIC CONTEXT</div>')
         e1, e2, e3 = st.columns(3)
         with e1:
             st.session_state["student_profile"]["Unemployment rate"] = st.number_input(
@@ -902,15 +998,13 @@ elif nav_page == "Student Profile":
             )
 
 # ==============================================================================
-# PAGE 3: WHAT-IF LAB
+# TAB 3: WHAT-IF LAB
 # ==============================================================================
-elif nav_page == "What-If Lab":
-    st.caption("Retention Intelligence / What-If Lab")
-    st.title("What-If Intervention Lab")
-    st.caption("Simulate targeted interventions and estimate their potential effect on student risk.")
-
+with tab_whatif:
+    render_student_context()
     render_context_controls()
-    st.divider()
+
+    st.markdown("---")
 
     sim_values = dict(current_values)
     base_enrolled = int(sim_values.get("Curricular units 1st sem (enrolled)", 0))
@@ -919,9 +1013,9 @@ elif nav_page == "What-If Lab":
     col_ctrl, col_impact = st.columns(2, gap="large")
 
     with col_ctrl:
-        st.caption("INTERVENTION SCENARIO")
+        st.html('<div class="ri-section-label">INTERVENTION SCENARIO</div>')
         if base_enrolled == 0:
-            st.info("Baseline enrolled units is 0. Enroll the student in units on Student Profile to simulate tutoring.")
+            st.info("Baseline enrolled units is 0. Enroll the student in units on the Student Profile tab to simulate tutoring.")
             tutoring_boost = 0
         else:
             max_boost = max(0, base_enrolled - base_approved)
@@ -971,44 +1065,44 @@ elif nav_page == "What-If Lab":
 
     with col_impact:
         with st.container(border=True):
-            st.caption("PREDICTED IMPACT")
-            arrow_html = f"""
-            <div style="display:flex; align-items:center; gap:24px; margin:12px 0;">
-              <div>
-                <div style="font-size:12px; color:#64748B;">Baseline</div>
-                <div style="font-size:36px; font-weight:700; font-family:monospace;">{risk:.1%}</div>
-                <div style="font-size:12px; color:#64748B;">{tier_name} Risk</div>
+            st.html('<div class="ri-section-label">PREDICTED IMPACT</div>')
+
+            sim_tier_css = "ri-risk-high" if sim_tier == "High" else ("ri-risk-med" if sim_tier == "Medium" else "ri-risk-low")
+            base_tier_css = "ri-risk-high" if tier_name == "High" else ("ri-risk-med" if tier_name == "Medium" else "ri-risk-low")
+
+            st.html(f"""
+            <div class="ri-impact">
+              <div class="ri-impact-block">
+                <label>Baseline</label>
+                <div class="ri-impact-val {base_tier_css}">{risk:.1%}</div>
+                <div class="ri-impact-tier">{tier_name} Risk</div>
               </div>
-              <div style="font-size:28px; color:#64748B;">&rarr;</div>
-              <div>
-                <div style="font-size:12px; color:#64748B;">Projected</div>
-                <div style="font-size:36px; font-weight:700; font-family:monospace; color:#2563EB;">{sim_risk:.1%}</div>
-                <div style="font-size:12px; color:#64748B;">{sim_tier} Risk</div>
+              <div class="ri-arrow">&rarr;</div>
+              <div class="ri-impact-block">
+                <label>Projected</label>
+                <div class="ri-impact-val {sim_tier_css}">{sim_risk:.1%}</div>
+                <div class="ri-impact-tier">{sim_tier} Risk</div>
               </div>
             </div>
-            """
-            st.html(arrow_html)
+            """)
 
             st.caption("Risk reduction")
             if reduction_pp > 0:
-                st.markdown(f":green-badge[{reduction_pp:.1f} percentage points]")
+                st.markdown(f":green-badge[▼ {reduction_pp:.1f} percentage points]")
             elif reduction_pp < 0:
-                st.markdown(f":red-badge[{reduction_pp:+.1f} percentage points]")
+                st.markdown(f":red-badge[▲ {abs(reduction_pp):.1f} percentage points]")
             else:
                 st.markdown(":gray-badge[0.0 percentage points]")
 
             st.caption("Simulations reflect model sensitivity to modified inputs, not guaranteed causal outcomes.")
 
 # ==============================================================================
-# PAGE 4: GOVERNANCE
+# TAB 4: GOVERNANCE
 # ==============================================================================
-elif nav_page == "Governance":
-    st.caption("Retention Intelligence / Governance")
-    st.title("Model Governance & Fairness")
-    st.caption("Holdout performance, subgroup diagnostics and responsible-use safeguards.")
-    st.divider()
+with tab_gov:
+    st.markdown("---")
 
-    st.caption("MODEL PERFORMANCE")
+    st.html('<div class="ri-section-label">MODEL PERFORMANCE</div>')
     perf_df = pd.DataFrame([
         {"Metric": "Holdout cohort (N)", "Early Warning (Sem 1)": "885 students", "Full Curriculum (Sem 1 & 2)": "885 students"},
         {"Metric": "Dropout ROC-AUC", "Early Warning (Sem 1)": "0.893", "Full Curriculum (Sem 1 & 2)": "0.915"},
@@ -1018,10 +1112,10 @@ elif nav_page == "Governance":
         {"Metric": "Cost reduction vs flag nobody", "Early Warning (Sem 1)": "77.2%", "Full Curriculum (Sem 1 & 2)": "77.0%"},
         {"Metric": "Cost reduction vs flag all", "Early Warning (Sem 1)": "~46.0%", "Full Curriculum (Sem 1 & 2)": "~44.0%"},
     ])
-    st.dataframe(perf_df, hide_index=True, width="stretch", alt="Holdout test performance comparison")
+    st.dataframe(perf_df, hide_index=True, use_container_width=True)
 
-    st.divider()
-    st.caption("FAIRNESS AUDIT")
+    st.markdown("---")
+    st.html('<div class="ri-section-label">FAIRNESS AUDIT</div>')
     fairness_rows = [
         (
             "Scholarship disparity",
@@ -1043,25 +1137,30 @@ elif nav_page == "Governance":
         ),
     ]
     for title, metric, observed, interp in fairness_rows:
-        c_title, c_obs, c_int = st.columns([2, 3, 5])
-        with c_title:
-            st.markdown(f"**{title}**")
-            st.caption(metric)
-        with c_obs:
-            st.markdown(f"`{observed}`")
-        with c_int:
-            st.write(interp)
-        st.divider()
+        st.html(f"""
+        <div class="ri-fairness">
+          <div class="ri-fairness-title">{title}</div>
+          <div class="ri-fairness-metric">{metric}</div>
+          <div class="ri-fairness-obs">{observed}</div>
+          <div class="ri-fairness-interp">{interp}</div>
+        </div>
+        """)
 
-    st.caption("RESPONSIBLE USE")
+    st.markdown("---")
+    st.html('<div class="ri-section-label">RESPONSIBLE USE PRINCIPLES</div>')
     principles = [
         ("1", "Supportive, Not Punitive", "The system allocates advising, tutoring, and financial support and is never used to deny enrollment or penalize students."),
         ("2", "Human in the Loop", "Model scores serve strictly as diagnostic signals; a human academic advisor always makes the final mentoring decision."),
         ("3", "Unobserved External Factors", "Students leaving with strong grades and paid tuition often depart for personal, health, or relocation reasons absent from the database."),
-        ("4", "Attribution", "Built on the UCI 697 dataset created by Instituto Politécnico de Portalegre (Realinho et al., 2021) under CC BY 4.0."),
+        ("4", "Attribution", "Built on the UCI 697 dataset created by Instituto Polit&eacute;cnico de Portalegre (Realinho et al., 2021) under CC BY 4.0."),
     ]
     p_cols = st.columns(2, gap="medium")
     for idx, (num, p_title, p_desc) in enumerate(principles):
         with p_cols[idx % 2]:
-            st.markdown(f"**{num}. {p_title}**")
-            st.caption(p_desc)
+            st.html(f"""
+            <div class="ri-principle">
+              <div class="ri-principle-num">{num}</div>
+              <div class="ri-principle-title">{p_title}</div>
+              <div class="ri-principle-desc">{p_desc}</div>
+            </div>
+            """)
