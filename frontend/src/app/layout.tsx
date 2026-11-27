@@ -4,9 +4,9 @@ import { StudentProvider } from "@/context/StudentContext";
 import { AppShell } from "@/components/AppShell";
 
 export const metadata: Metadata = {
-  title: "RetainAI • Student Retention & Early-Warning Intelligence",
+  title: "Retention Intelligence • Student Success Analytics",
   description:
-    "Interpretable early-warning machine learning system for higher education student retention",
+    "AI-powered university student retention and early-warning decision-support platform",
 };
 
 export default function RootLayout({
@@ -15,7 +15,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <body className="font-sans bg-background text-foreground antialiased">
         <StudentProvider>
           <AppShell>{children}</AppShell>

@@ -1,23 +1,41 @@
-# Retention Intelligence - Enterprise University Theme
+# Retention Intelligence — Institutional AI Design System
 [theme]
+base = "light"
 showWidgetBorder = false
-showSidebarBorder = true
-baseRadius = "6px"
-buttonRadius = "6px"
+showSidebarBorder = false
+baseRadius = "8px"
+buttonRadius = "8px"
 font = "'Inter':https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
 headingFont = "'Inter':https://fonts.googleapis.com/css2?family=Inter:wght@600;700&display=swap"
 codeFont = "'JetBrains Mono':https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"
 baseFontSize = 14
 baseFontWeight = 400
 codeFontSize = "13px"
-headingFontSizes = ["26px", "20px", "17px", "15px", "14px", "12px"]
+headingFontSizes = ["28px", "20px", "16px", "14px", "13px", "12px"]
 headingFontWeights = [700, 600, 600, 600, 500, 500]
 linkUnderline = false
-paddingTop = "1.25rem"
+paddingTop = "1rem"
 paddingBottom = "3rem"
 
-[theme.dark]
+[theme.light]
 primaryColor = "#2563EB"
+backgroundColor = "#F8FAFC"
+secondaryBackgroundColor = "#FFFFFF"
+codeBackgroundColor = "#F1F5F9"
+textColor = "#0F172A"
+linkColor = "#2563EB"
+borderColor = "#E2E8F0"
+codeTextColor = "#334155"
+greenColor = "#16A34A"
+redColor = "#DC2626"
+yellowColor = "#D97706"
+orangeColor = "#D97706"
+blueColor = "#2563EB"
+violetColor = "#4F46E5"
+grayColor = "#64748B"
+
+[theme.dark]
+primaryColor = "#3B82F6"
 backgroundColor = "#0B0F17"
 secondaryBackgroundColor = "#111827"
 codeBackgroundColor = "#1E293B"
@@ -28,39 +46,10 @@ codeTextColor = "#E2E8F0"
 greenColor = "#10B981"
 redColor = "#EF4444"
 yellowColor = "#F59E0B"
-orangeColor = "#F97316"
-blueColor = "#2563EB"
+orangeColor = "#F59E0B"
+blueColor = "#3B82F6"
 violetColor = "#6366F1"
 grayColor = "#94A3B8"
-dataframeBorderColor = "#1E293B"
-dataframeHeaderBackgroundColor = "#111827"
-dataframeHeaderTextColor = "#F8FAFC"
-
-[theme.dark.sidebar]
-backgroundColor = "#070B12"
-secondaryBackgroundColor = "#111827"
-codeBackgroundColor = "#1E293B"
-textColor = "#F8FAFC"
-borderColor = "#1E293B"
-primaryColor = "#2563EB"
-linkColor = "#60A5FA"
-
-[theme.light]
-primaryColor = "#2563EB"
-backgroundColor = "#FFFFFF"
-secondaryBackgroundColor = "#F8FAFC"
-codeBackgroundColor = "#F1F5F9"
-textColor = "#0F172A"
-linkColor = "#2563EB"
-borderColor = "#E2E8F0"
-codeTextColor = "#334155"
-greenColor = "#059669"
-redColor = "#DC2626"
-yellowColor = "#D97706"
-orangeColor = "#EA580C"
-blueColor = "#2563EB"
-violetColor = "#6366F1"
-grayColor = "#64748B"
 
 [browser]
 gatherUsageStats = false

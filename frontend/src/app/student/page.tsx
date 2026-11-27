@@ -31,6 +31,7 @@ const PRESET_DESCRIPTIONS: Record<string, string> = {
 export default function StudentDeepDivePage() {
   const {
     tag,
+    setTag,
     metadata,
     studentValues,
     setStudentValues,
@@ -43,6 +44,20 @@ export default function StudentDeepDivePage() {
   const [prediction, setPrediction] = useState<PredictResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"explain" | "edit">("explain");
+  const [actionsOpen, setActionsOpen] = useState(false);
+
+  const handleResetProfile = () => {
+    if (!metadata) return;
+    const specs = tag === "early" ? metadata.specs_early : metadata.specs_full;
+    const defaults: Record<string, any> = {};
+    for (const [k, s] of Object.entries<any>(specs)) {
+      defaults[k] = s.default;
+    }
+    setStudentValues(defaults);
+    setTargetLabel(null);
+    setSelectedPersona("Custom Input");
+    setActionsOpen(false);
+  };
 
   useEffect(() => {
     if (!studentValues || Object.keys(studentValues).length === 0) return;
@@ -173,41 +188,47 @@ export default function StudentDeepDivePage() {
       transition={{ duration: 0.2 }}
       className="space-y-6"
     >
-      {/* Top Section */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-4 border-b border-border">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Risk Assessment</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">
-            Identify early signs of student attrition and understand the factors driving the prediction.
-          </p>
-          <div className="mt-2.5 text-xs text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-1">
-            <span>
-              Student Profile: <strong className="text-foreground">{selectedPersona}</strong>
-            </span>
-            <span>·</span>
-            <span>{courseName}</span>
-            <span>·</span>
-            <span>Age {age}</span>
-            <span>·</span>
-            <span>{tag === "early" ? "Semester 1" : "Semesters 1 & 2"}</span>
-            {targetLabel && (
-              <>
-                <span>·</span>
-                <span className="text-blue-500 font-medium">Recorded: {targetLabel}</span>
-              </>
-            )}
-          </div>
+      {/* Breadcrumb + Top Section */}
+      <div className="space-y-4 pb-5 border-b border-border">
+        <div className="text-xs text-muted-foreground">
+          Retention Intelligence <span className="mx-1.5">/</span>{" "}
+          <span className="text-foreground font-medium">
+            {activeTab === "explain" ? "Risk Assessment" : "Student Profile"}
+          </span>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
-          <button
-            onClick={handleSampleRandom}
-            className="px-3 py-1.5 text-xs rounded-md font-medium bg-card hover:bg-muted border border-border inline-flex items-center gap-1.5 transition-colors"
-          >
-            <RefreshCw className="w-3.5 h-3.5 text-muted-foreground" />
-            Sample Random
-          </button>
-          <div className="flex items-center p-0.5 rounded-md bg-muted border border-border">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-semibold tracking-tight">
+              {activeTab === "explain" ? "Risk Assessment" : "Student Profile"}
+            </h1>
+            <p className="text-sm text-muted-foreground mt-0.5">
+              {activeTab === "explain"
+                ? "Identify early signs of student attrition and understand the factors driving the prediction."
+                : "Configure the academic, financial, enrollment and demographic information used by the model."}
+            </p>
+            <div className="mt-2.5 text-xs text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-1">
+              <span>
+                Student: <strong className="text-foreground">{selectedPersona}</strong>
+              </span>
+              <span>·</span>
+              <span>{courseName}</span>
+              <span>·</span>
+              <span>Age {age}</span>
+              <span>·</span>
+              <span>{tag === "early" ? "Semester 1" : "Semesters 1 & 2"}</span>
+              {targetLabel && (
+                <>
+                  <span>·</span>
+                  <span className="text-blue-600 dark:text-blue-400 font-medium">
+                    Recorded: {targetLabel}
+                  </span>
+                </>
+              )}
+            </div>
+          </div>
+
+          <div className="flex items-center p-0.5 rounded-md bg-muted border border-border shrink-0">
             <button
               onClick={() => setActiveTab("explain")}
               className={`px-3 py-1.5 rounded text-xs font-medium inline-flex items-center gap-1.5 transition-colors ${
@@ -217,7 +238,7 @@ export default function StudentDeepDivePage() {
               }`}
             >
               <BarChart3 className="w-3.5 h-3.5" />
-              Assessment
+              Risk Assessment
             </button>
             <button
               onClick={() => setActiveTab("edit")}
@@ -232,36 +253,84 @@ export default function StudentDeepDivePage() {
             </button>
           </div>
         </div>
-      </div>
 
-      {/* Selectable Student Presets Strip */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        {["High-Risk Attrition", "High-Performing Scholar", "Borderline Struggling", "Custom Input"].map(
-          (name) => {
-            const active = selectedPersona === name;
-            return (
+        {/* Contextual Controls Bar */}
+        <div className="flex flex-wrap items-end gap-4 pt-2">
+          <div>
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground block mb-1">
+              Model Scope
+            </span>
+            <div className="inline-flex p-0.5 rounded-md bg-muted border border-border">
               <button
-                key={name}
-                onClick={() => handlePersonaChange(name)}
-                className={`text-left p-3 rounded-lg border transition-colors ${
-                  active
-                    ? "border-blue-500 bg-blue-500/5"
-                    : "border-border bg-card/50 hover:bg-muted/40"
+                onClick={() => setTag("early")}
+                className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
+                  tag === "early"
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                <div className="flex items-center justify-between">
-                  <span className={`text-xs font-semibold ${active ? "text-blue-500" : "text-foreground"}`}>
-                    {name}
-                  </span>
-                  {active && <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />}
-                </div>
-                <p className="text-[11px] text-muted-foreground mt-0.5 line-clamp-1">
-                  {PRESET_DESCRIPTIONS[name]}
-                </p>
+                Early Warning
               </button>
-            );
-          }
-        )}
+              <button
+                onClick={() => setTag("full")}
+                className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
+                  tag === "full"
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Full Curriculum
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground block mb-1">
+              Student Profile
+            </span>
+            <select
+              value={selectedPersona}
+              onChange={(e) => handlePersonaChange(e.target.value)}
+              aria-label="Select student profile preset"
+              className="px-3 py-1.5 text-xs font-medium rounded-md bg-card border border-border focus:outline-none focus:ring-1 focus:ring-blue-500"
+            >
+              <option value="Custom Input">Custom Input</option>
+              <option value="High-Risk Attrition">High-Risk Attrition</option>
+              <option value="High-Performing Scholar">High-Performing Scholar</option>
+              <option value="Borderline Struggling">Borderline Struggling</option>
+            </select>
+          </div>
+
+          <div className="relative">
+            <button
+              onClick={() => setActionsOpen(!actionsOpen)}
+              className="px-3 py-1.5 text-xs font-medium rounded-md bg-card hover:bg-muted border border-border inline-flex items-center gap-1.5 transition-colors"
+            >
+              Actions
+              <span className="text-[10px] text-muted-foreground">&#9662;</span>
+            </button>
+            {actionsOpen && (
+              <div className="absolute left-0 mt-1.5 w-44 rounded-lg border border-border bg-card shadow-sm z-20 py-1 text-xs">
+                <button
+                  onClick={() => {
+                    handleSampleRandom();
+                    setActionsOpen(false);
+                  }}
+                  className="w-full text-left px-3 py-2 hover:bg-muted flex items-center gap-2 transition-colors"
+                >
+                  <RefreshCw className="w-3.5 h-3.5 text-muted-foreground" />
+                  Sample student
+                </button>
+                <button
+                  onClick={handleResetProfile}
+                  className="w-full text-left px-3 py-2 hover:bg-muted transition-colors"
+                >
+                  Reset profile
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       {activeTab === "explain" ? (
@@ -717,6 +786,20 @@ export default function StudentDeepDivePage() {
           </div>
         </div>
       )}
+
+      {/* Contextual Model Performance Strip */}
+      <div className="pt-4 border-t border-border flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
+        <span className="font-semibold uppercase tracking-wider text-[10px]">Model Performance</span>
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-mono text-[11px]">
+          <span>ROC-AUC <strong className="text-foreground">{tag === "early" ? "0.893" : "0.915"}</strong></span>
+          <span>|</span>
+          <span>Recall <strong className="text-foreground">{tag === "early" ? "89.4%" : "86.6%"}</strong></span>
+          <span>|</span>
+          <span>Threshold <strong className="text-foreground">{tag === "early" ? "16%" : "18%"}</strong></span>
+          <span>|</span>
+          <span>Holdout <strong className="text-foreground">885</strong></span>
+        </div>
+      </div>
     </motion.div>
   );
 }
