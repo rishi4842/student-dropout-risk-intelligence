@@ -87,3 +87,23 @@ def test_api_governance_metrics():
     assert abs(data["full"]["dropout_roc_auc"] - 0.9147) < 1e-3
     assert data["early"]["at_chosen_threshold"]["recall"] > 0.89
     assert data["cost_benchmarks"]["early"]["cost_reduction_vs_nobody"] == "77.2%"
+
+
+def test_api_overview_real_holdout():
+    res = client.get("/api/overview?tag=early")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["n_test"] == 885
+    assert len(data["risk_distribution"]) == 10
+    assert sum(b["count"] for b in data["risk_distribution"]) == 885
+    assert len(data["priority_students"]) >= 10
+
+
+def test_api_sample_batch():
+    res = client.get("/api/sample_batch?tag=early&n=25")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["total_students"] == 25
+    assert len(data["students"]) == 25
+    risks = [s["risk"] for s in data["students"]]
+    assert risks == sorted(risks, reverse=True)

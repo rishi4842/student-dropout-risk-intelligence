@@ -1,103 +1,57 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { 
-  fetchMetadata, 
-  simulateIntervention, 
-  SimulateResponse 
-} from "@/lib/api";
+import { motion } from "framer-motion";
+import { simulateIntervention, SimulateResponse } from "@/lib/api";
 import { formatPercent, getTierColor } from "@/lib/utils";
-import { 
-  SlidersHorizontal, 
-  Sparkles, 
-  ArrowRight, 
-  ShieldCheck, 
-  CheckCircle2, 
-  AlertTriangle 
+import { useStudent } from "@/context/StudentContext";
+import {
+  SlidersHorizontal,
+  ShieldCheck,
+  CheckCircle2,
+  AlertTriangle,
 } from "lucide-react";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  Cell,
+  ReferenceLine,
+} from "recharts";
 
 export default function WhatIfPage() {
-  const [metadata, setMetadata] = useState<any>(null);
+  const { tag, studentValues, selectedPersona } = useStudent();
   const [tutoringBoost, setTutoringBoost] = useState<number>(2);
   const [grantRelief, setGrantRelief] = useState<boolean>(true);
   const [gradeBoost, setGradeBoost] = useState<number>(1.5);
   const [simResult, setSimResult] = useState<SimulateResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Default at-risk student for what-if
-  const baselineStudent = {
-    "Curricular units 1st sem (credited)": 0,
-    "Curricular units 1st sem (enrolled)": 6,
-    "Curricular units 1st sem (evaluations)": 6,
-    "Curricular units 1st sem (approved)": 0,
-    "Curricular units 1st sem (grade)": 0.0,
-    "Curricular units 1st sem (without evaluations)": 0,
-    "Tuition fees up to date": 0,
-    "Debtor": 1,
-    "Scholarship holder": 0,
-    "Age at enrollment": 28,
-    "Gender": 1,
-    "Admission grade": 105.0,
-    "Previous qualification (grade)": 110.0,
-    "Course": 9147,
-    "Application order": 1,
-    "Application mode": 39,
-    "Daytime/evening attendance": 0,
-    "Displaced": 0,
-    "Educational special needs": 0,
-    "International": 0,
-    "Marital status": 2,
-    "Nacionality": 1,
-    "Previous qualification": 1,
-    "Mother's qualification": 37,
-    "Father's qualification": 37,
-    "Mother's occupation": 9,
-    "Father's occupation": 9,
-    "Unemployment rate": 13.9,
-    "Inflation rate": -0.3,
-    "GDP": 0.79
-  };
-
-  const runSimulation = async (tutoring: number, grant: boolean, gpa: number) => {
-    try {
-      const res = await simulateIntervention(
-        "early",
-        baselineStudent,
-        tutoring,
-        grant,
-        gpa
-      );
-      setSimResult(res);
-      setLoading(false);
-    } catch (e) {
-      console.error("Simulation error:", e);
-      setLoading(false);
-    }
-  };
+  const baseEnrolled = Number(studentValues?.["Curricular units 1st sem (enrolled)"] ?? 0);
+  const baseApproved = Number(studentValues?.["Curricular units 1st sem (approved)"] ?? 0);
+  const maxTutoringBoost = Math.max(0, baseEnrolled - baseApproved);
 
   useEffect(() => {
-    runSimulation(tutoringBoost, grantRelief, gradeBoost);
-  }, []);
-
-  const handleTutoringChange = (val: number) => {
-    setTutoringBoost(val);
-    runSimulation(val, grantRelief, gradeBoost);
-  };
-
-  const handleGrantToggle = (val: boolean) => {
-    setGrantRelief(val);
-    runSimulation(tutoringBoost, val, gradeBoost);
-  };
-
-  const handleGpaChange = (val: number) => {
-    setGradeBoost(val);
-    runSimulation(tutoringBoost, grantRelief, val);
-  };
+    if (!studentValues || Object.keys(studentValues).length === 0) return;
+    const clampedBoost = Math.min(tutoringBoost, maxTutoringBoost);
+    simulateIntervention(tag, studentValues, clampedBoost, grantRelief, gradeBoost)
+      .then((res) => {
+        setSimResult(res);
+        setLoading(false);
+      })
+      .catch((e) => {
+        console.error("Simulation error:", e);
+        setLoading(false);
+      });
+  }, [tag, studentValues, tutoringBoost, grantRelief, gradeBoost, maxTutoringBoost]);
 
   if (loading || !simResult) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+      <div className="flex items-center justify-center min-h-[420px]">
+        <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -105,59 +59,97 @@ export default function WhatIfPage() {
   const baseColors = getTierColor(simResult.baseline_tier);
   const simColors = getTierColor(simResult.simulated_tier);
 
+  const chartData = [
+    {
+      name: "Baseline Risk",
+      riskPct: Number((simResult.baseline_risk * 100).toFixed(1)),
+      tier: simResult.baseline_tier,
+    },
+    {
+      name: "Post-Intervention",
+      riskPct: Number((simResult.simulated_risk * 100).toFixed(1)),
+      tier: simResult.simulated_tier,
+    },
+  ];
+
+  const cutoffPct = tag === "early" ? 16 : 18;
+
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-white">What-If Intervention Simulator</h1>
-        <p className="text-sm text-slate-400 mt-1">
-          Model the counterfactual impact of academic tutoring, hardship grants, and GPA recovery before allocating resources.
-        </p>
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.25 }}
+      className="space-y-8"
+    >
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">What-If Intervention Simulator</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Simulate academic tutoring, emergency hardship grants, and grade recovery for the currently selected student ({selectedPersona}).
+          </p>
+        </div>
+        <span className="text-xs font-mono text-muted-foreground">
+          Pipeline: {tag === "early" ? "Semester 1 Early-Warning" : "Full Curriculum"}
+        </span>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Left: Intervention Controls */}
-        <div className="p-6 rounded-xl bg-slate-900/60 border border-slate-800 space-y-6">
+        <div className="p-6 rounded-xl bg-card border border-border space-y-6">
           <div className="flex items-center gap-2">
-            <SlidersHorizontal className="w-5 h-5 text-blue-400" />
-            <h2 className="text-base font-semibold text-white">Intervention Controls</h2>
+            <SlidersHorizontal className="w-5 h-5 text-blue-500" />
+            <h2 className="text-base font-semibold">Intervention Controls</h2>
           </div>
 
           <div className="space-y-6">
             {/* Tutoring Units */}
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs font-medium">
-                <span className="text-slate-300">Tutoring: Convert Failed Units to Passed</span>
-                <span className="font-mono text-blue-400">+{tutoringBoost} Approved Units</span>
+                <span>Tutoring: Convert Failed Units to Passed</span>
+                <span className="font-mono text-blue-500">
+                  +{Math.min(tutoringBoost, maxTutoringBoost)} Approved Units
+                </span>
               </div>
-              <input
-                type="range"
-                min="0"
-                max="6"
-                value={tutoringBoost}
-                onChange={(e) => handleTutoringChange(Number(e.target.value))}
-                className="w-full accent-blue-500 bg-slate-800 h-2 rounded-lg cursor-pointer"
-              />
-              <p className="text-[11px] text-slate-500">
-                Automatically adjusts evaluations and sets passing grade threshold (&ge; 10.0/20).
+              {baseEnrolled === 0 ? (
+                <p className="text-xs text-amber-500 bg-amber-500/10 border border-amber-500/20 rounded-md p-2.5">
+                  Student has 0 enrolled units. Enroll the student in units on the Student page before simulating tutoring.
+                </p>
+              ) : maxTutoringBoost === 0 ? (
+                <p className="text-xs text-emerald-500 bg-emerald-500/10 border border-emerald-500/20 rounded-md p-2.5">
+                  Student has already passed all {baseEnrolled} enrolled units.
+                </p>
+              ) : (
+                <input
+                  type="range"
+                  min={0}
+                  max={maxTutoringBoost}
+                  value={Math.min(tutoringBoost, maxTutoringBoost)}
+                  onChange={(e) => setTutoringBoost(Number(e.target.value))}
+                  className="w-full accent-blue-500 h-2 rounded-lg cursor-pointer"
+                />
+              )}
+              <p className="text-[11px] text-muted-foreground">
+                Automatically clamps approved units &le; enrolled ({baseEnrolled}) and updates evaluations &ge; approved.
               </p>
             </div>
 
             {/* Emergency Hardship Grant */}
-            <div className="pt-4 border-t border-slate-800 flex items-center justify-between">
+            <div className="pt-4 border-t border-border flex items-center justify-between">
               <div>
-                <span className="text-xs font-semibold text-slate-200 block">Emergency Hardship Grant</span>
-                <span className="text-[11px] text-slate-400 block mt-0.5">
+                <span className="text-xs font-semibold block">Emergency Hardship Grant</span>
+                <span className="text-[11px] text-muted-foreground block mt-0.5">
                   Clears overdue tuition and resolves institutional debt holds.
                 </span>
               </div>
               <button
-                onClick={() => handleGrantToggle(!grantRelief)}
-                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                  grantRelief ? "bg-blue-600" : "bg-slate-700"
+                onClick={() => setGrantRelief(!grantRelief)}
+                aria-label="Toggle emergency hardship grant"
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out ${
+                  grantRelief ? "bg-blue-600" : "bg-muted"
                 }`}
               >
                 <span
-                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition duration-200 ease-in-out ${
                     grantRelief ? "translate-x-5" : "translate-x-0"
                   }`}
                 />
@@ -165,91 +157,123 @@ export default function WhatIfPage() {
             </div>
 
             {/* Grade Improvement */}
-            <div className="pt-4 border-t border-slate-800 space-y-2">
+            <div className="pt-4 border-t border-border space-y-2">
               <div className="flex items-center justify-between text-xs font-medium">
-                <span className="text-slate-300">Study Workshop: Grade Improvement</span>
-                <span className="font-mono text-blue-400">+{gradeBoost.toFixed(1)} Points (0–20 Scale)</span>
+                <span>Study Workshop: Grade Improvement</span>
+                <span className="font-mono text-blue-500">+{gradeBoost.toFixed(1)} Points (0–20 Scale)</span>
               </div>
               <input
                 type="range"
-                min="0.0"
-                max="4.0"
-                step="0.5"
+                min={0.0}
+                max={4.0}
+                step={0.5}
                 value={gradeBoost}
-                onChange={(e) => handleGpaChange(Number(e.target.value))}
-                className="w-full accent-blue-500 bg-slate-800 h-2 rounded-lg cursor-pointer"
+                onChange={(e) => setGradeBoost(Number(e.target.value))}
+                className="w-full accent-blue-500 h-2 rounded-lg cursor-pointer"
               />
             </div>
 
             {/* Validation Notice */}
-            <div className="p-3.5 rounded-lg bg-slate-800/60 border border-slate-700/80 flex items-center gap-2.5 text-xs text-slate-300">
-              <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+            <div className="p-3.5 rounded-lg bg-muted/60 border border-border flex items-center gap-2.5 text-xs">
+              <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
               <span>
-                <strong>Dataset Integrity Guarantee:</strong> Approved ({simResult.validated_values["Curricular units 1st sem (approved)"]}) 
-                &le; Evaluations ({simResult.validated_values["Curricular units 1st sem (evaluations)"]}) 
-                &le; Enrolled ({simResult.validated_values["Curricular units 1st sem (enrolled)"]}).
+                <strong>Dataset Integrity Guarantee:</strong> Approved (
+                {simResult.validated_values["Curricular units 1st sem (approved)"]}) &le; Evaluations (
+                {simResult.validated_values["Curricular units 1st sem (evaluations)"]}) &le; Enrolled (
+                {simResult.validated_values["Curricular units 1st sem (enrolled)"]}).
               </span>
             </div>
           </div>
         </div>
 
-        {/* Right: Before vs After Delta */}
-        <div className="p-6 rounded-xl bg-slate-900/60 border border-slate-800 space-y-6 flex flex-col justify-between">
+        {/* Right: Before vs After Delta & Chart */}
+        <div className="p-6 rounded-xl bg-card border border-border space-y-6 flex flex-col justify-between">
           <div>
-            <h2 className="text-base font-semibold text-white">Projected Risk Reduction</h2>
-            <p className="text-xs text-slate-400 mt-0.5">
-              Comparative impact of configured interventions on calibrated attrition probability
+            <h2 className="text-base font-semibold">Projected Risk Reduction</h2>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Before vs. after calibrated attrition probability
             </p>
           </div>
 
-          {/* Side by side comparison cards */}
           <div className="grid grid-cols-2 gap-4">
-            <div className="p-4 rounded-lg bg-slate-800/40 border border-slate-700/60 space-y-2">
-              <span className="text-xs text-slate-400 uppercase tracking-wider block font-medium">Baseline Risk</span>
-              <div className="text-3xl font-bold font-mono text-white">
-                {formatPercent(simResult.baseline_risk)}
-              </div>
-              <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold ${baseColors.badge}`}>
+            <div className="p-4 rounded-lg bg-muted/40 border border-border space-y-2">
+              <span className="text-xs text-muted-foreground uppercase tracking-wider block font-medium">
+                Baseline Risk
+              </span>
+              <div className="text-3xl font-bold font-mono">{formatPercent(simResult.baseline_risk)}</div>
+              <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold border ${baseColors.badge}`}>
                 {baseColors.label}
               </span>
             </div>
 
             <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/30 space-y-2">
-              <span className="text-xs text-blue-300 uppercase tracking-wider block font-medium">Simulated Risk</span>
-              <div className="text-3xl font-bold font-mono text-blue-400">
+              <span className="text-xs text-blue-500 uppercase tracking-wider block font-medium">
+                Simulated Risk
+              </span>
+              <div className="text-3xl font-bold font-mono text-blue-500">
                 {formatPercent(simResult.simulated_risk)}
               </div>
-              <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold ${simColors.badge}`}>
+              <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-semibold border ${simColors.badge}`}>
                 {simColors.label}
               </span>
             </div>
           </div>
 
-          {/* Delta Statement */}
-          <div className="p-4 rounded-lg bg-slate-800/60 border border-slate-700 space-y-2">
-            <div className="flex items-center gap-2">
-              {simResult.risk_diff < 0 ? (
-                <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
-              ) : (
-                <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0" />
-              )}
-              <h3 className="text-sm font-semibold text-white">
-                {simResult.risk_diff < -0.05 
-                  ? `Achieves ${formatPercent(Math.abs(simResult.risk_diff))} Net Risk Reduction`
-                  : "Marginal Impact with Current Parameters"}
-              </h3>
-            </div>
-            <p className="text-xs text-slate-300">
-              Intervention shifts this student from <strong>{simResult.baseline_tier} Risk</strong> to <strong>{simResult.simulated_tier} Risk</strong>. 
-              Provides empirical justification for university bursar and academic counseling support.
-            </p>
+          <div className="h-44 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={chartData} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
+                <XAxis dataKey="name" stroke="#94A3B8" fontSize={11} />
+                <YAxis domain={[0, 100]} stroke="#94A3B8" fontSize={11} unit="%" />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#0F172A",
+                    borderColor: "#334155",
+                    borderRadius: "8px",
+                    fontSize: "12px",
+                    color: "#F8FAFC",
+                  }}
+                />
+                <ReferenceLine y={cutoffPct} stroke="#F59E0B" strokeDasharray="3 3" label={{ value: `Cutoff ${cutoffPct}%`, fill: "#F59E0B", fontSize: 10, position: "insideTopRight" }} />
+                <Bar dataKey="riskPct" radius={[6, 6, 0, 0]} barSize={48}>
+                  {chartData.map((entry, idx) => (
+                    <Cell
+                      key={`sim-${idx}`}
+                      fill={
+                        entry.tier === "High"
+                          ? "#EF4444"
+                          : entry.tier === "Medium"
+                          ? "#F59E0B"
+                          : "#10B981"
+                      }
+                    />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
           </div>
 
-          <div className="text-[11px] text-slate-500 text-center">
-            *Simulation estimates model response to parameter shifts. Real-world efficacy requires tracking post-intervention student retention.
+          <div className="p-4 rounded-lg bg-muted/50 border border-border space-y-1.5">
+            <div className="flex items-center gap-2">
+              {simResult.risk_diff < -0.02 ? (
+                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+              ) : (
+                <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0" />
+              )}
+              <h3 className="text-sm font-semibold">
+                {simResult.risk_diff < -0.05
+                  ? `Achieves ${formatPercent(Math.abs(simResult.risk_diff))} Net Risk Reduction`
+                  : simResult.risk_diff < 0
+                  ? `Modest Reduction (${formatPercent(Math.abs(simResult.risk_diff))})`
+                  : "No Risk Reduction Under Current Parameters"}
+              </h3>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Tier trajectory: <strong>{simResult.baseline_tier} Risk</strong> &rarr;{" "}
+              <strong>{simResult.simulated_tier} Risk</strong>. Simulations estimate model response, not guaranteed causal outcomes.
+            </p>
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

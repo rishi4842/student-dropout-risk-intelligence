@@ -117,3 +117,44 @@ export async function fetchGovernance() {
   if (!res.ok) throw new Error("Failed to load governance metrics");
   return res.json();
 }
+
+export interface OverviewResponse {
+  tag: "early" | "full";
+  n_test: number;
+  threshold: number;
+  high_tier_cutoff: number;
+  roc_auc: number;
+  recall: number;
+  precision: number;
+  flagged_share: number;
+  cost_reduction_nobody: string;
+  cost_reduction_all: string;
+  tier_counts: { High: number; Medium: number; Low: number };
+  risk_distribution: Array<{ bucket: string; count: number; zone: "High" | "Medium" | "Low" }>;
+  priority_students: Array<{
+    id: number;
+    course: string;
+    age: number;
+    enrolled: number;
+    approved: number;
+    grade: number;
+    tuition: boolean;
+    debt: boolean;
+    risk: number;
+    tier: "High" | "Medium" | "Low";
+    actual_outcome: string;
+    values: Record<string, any>;
+  }>;
+}
+
+export async function fetchOverview(tag: "early" | "full" = "early"): Promise<OverviewResponse> {
+  const res = await fetch(`${API_BASE}/api/overview?tag=${tag}`);
+  if (!res.ok) throw new Error("Failed to load overview analytics");
+  return res.json();
+}
+
+export async function fetchSampleBatch(tag: "early" | "full" = "early", n: number = 50): Promise<BatchResponse> {
+  const res = await fetch(`${API_BASE}/api/sample_batch?tag=${tag}&n=${n}`);
+  if (!res.ok) throw new Error("Failed to sample batch cohort");
+  return res.json();
+}

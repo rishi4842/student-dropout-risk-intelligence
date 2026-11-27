@@ -20,8 +20,9 @@ from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from src.explain import HIGH_TIER, fmt_value
-from src.pipeline import load_data
+from src.evaluate import apply_calibrator
+from src.explain import HIGH_TIER, fmt_value, tier as compute_tier
+from src.pipeline import load_data, make_split
 from src.predict import (TIER_ACTIONS, feature_specs, load_artifacts,
                           random_student, score_student, top_changes)
 
@@ -494,6 +495,158 @@ def get_governance():
             }
         }
     }
+
+
+_overview_cache: Dict[str, Any] = {}
+
+
+def _build_overview(target_tag: str) -> Dict[str, Any]:
+    if target_tag in _overview_cache:
+        return _overview_cache[target_tag]
+
+    art = artifacts[target_tag]
+    _, X_te, _, y_te = make_split(dataset_df, early=(target_tag == "early"))
+    p_raw = art.pipe.predict_proba(X_te)[:, 0]
+    risks = apply_calibrator(art.method, art.calibrator, p_raw)
+
+    # Histogram bins (0-10%, 10-20%, ..., 90-100%)
+    bins = []
+    for b in range(10):
+        lo, hi = b * 0.1, (b + 1) * 0.1
+        if b == 9:
+            mask = (risks >= lo) & (risks <= 1.0)
+        else:
+            mask = (risks >= lo) & (risks < hi)
+        mid = (lo + hi) / 2.0
+        zone = "High" if mid >= HIGH_TIER else ("Medium" if mid >= art.threshold else "Low")
+        bins.append({
+            "bucket": f"{b * 10}-{(b + 1) * 10}%",
+            "count": int(mask.sum()),
+            "zone": zone
+        })
+
+    tiers = [compute_tier(float(r), art.threshold) for r in risks]
+    high_count = sum(1 for t_val in tiers if t_val == "High")
+    medium_count = sum(1 for t_val in tiers if t_val == "Medium")
+    low_count = sum(1 for t_val in tiers if t_val == "Low")
+
+    # Build real priority student list (top 8 highest risk + 2 medium + 2 low for balanced triage view)
+    order = np.argsort(-risks)
+    med_indices = [i for i in order if tiers[i] == "Medium"][:2]
+    low_indices = [i for i in order if tiers[i] == "Low"][:2]
+    selected_indices = list(order[:8]) + med_indices + low_indices
+
+    priority_students = []
+    for pos in selected_indices:
+        row = X_te.iloc[pos]
+        row_idx = int(X_te.index[pos])
+        actual = str(dataset_df.loc[row_idx, "Target"])
+        vals = {}
+        for f in art.features:
+            v = row[f]
+            vals[f] = int(v) if "int" in str(type(v)).lower() else float(v)
+        priority_students.append({
+            "id": row_idx + 1,
+            "course": COURSE_MAP.get(int(row["Course"]), f"Code {int(row['Course'])}"),
+            "age": int(row["Age at enrollment"]),
+            "enrolled": int(row["Curricular units 1st sem (enrolled)"]),
+            "approved": int(row["Curricular units 1st sem (approved)"]),
+            "grade": round(float(row["Curricular units 1st sem (grade)"]), 1),
+            "tuition": bool(int(row["Tuition fees up to date"]) == 1),
+            "debt": bool(int(row["Debtor"]) == 1),
+            "risk": round(float(risks[pos]), 4),
+            "tier": tiers[pos],
+            "actual_outcome": actual,
+            "values": vals
+        })
+
+    res_json = json.load(open(ROOT / "reports" / f"test_results_xgboost_{target_tag}.json"))
+    payload = {
+        "tag": target_tag,
+        "n_test": int(len(X_te)),
+        "threshold": art.threshold,
+        "high_tier_cutoff": HIGH_TIER,
+        "roc_auc": round(float(res_json["dropout_roc_auc"]), 3),
+        "recall": round(float(res_json["at_chosen_threshold"]["recall"]), 4),
+        "precision": round(float(res_json["at_chosen_threshold"]["precision"]), 4),
+        "flagged_share": round(float(res_json["at_chosen_threshold"]["flagged_share"]), 4),
+        "cost_reduction_nobody": "77.2%" if target_tag == "early" else "77.0%",
+        "cost_reduction_all": "~46.0%" if target_tag == "early" else "~44.1%",
+        "tier_counts": {
+            "High": high_count,
+            "Medium": medium_count,
+            "Low": low_count
+        },
+        "risk_distribution": bins,
+        "priority_students": priority_students
+    }
+    _overview_cache[target_tag] = payload
+    return payload
+
+
+@app.get("/api/overview")
+def get_overview(tag: str = "early"):
+    target_tag = "early" if tag == "early" else "full"
+    return _build_overview(target_tag)
+
+
+@app.get("/api/sample_batch")
+def sample_batch(tag: str = "early", n: int = 50):
+    """Score n real students from the holdout test split for instant batch demo."""
+    target_tag = "early" if tag == "early" else "full"
+    art = artifacts[target_tag]
+    _, X_te, _, _ = make_split(dataset_df, early=(target_tag == "early"))
+    sample_df = X_te.sample(n=min(n, len(X_te)), random_state=42)
+
+    p_raw = art.pipe.predict_proba(sample_df)[:, 0]
+    risks = apply_calibrator(art.method, art.calibrator, p_raw)
+
+    results = []
+    high_count = 0
+    medium_count = 0
+    low_count = 0
+    flagged_count = 0
+
+    for i, (row_idx, row) in enumerate(sample_df.iterrows()):
+        r = float(risks[i])
+        tr = compute_tier(r, art.threshold)
+        is_flagged = r >= art.threshold
+        if tr == "High":
+            high_count += 1
+        elif tr == "Medium":
+            medium_count += 1
+        else:
+            low_count += 1
+        if is_flagged:
+            flagged_count += 1
+
+        results.append({
+            "id": int(row_idx) + 1,
+            "risk": round(r, 4),
+            "tier": tr,
+            "flagged": is_flagged,
+            "course": COURSE_MAP.get(int(row["Course"]), str(row["Course"])),
+            "age": int(row["Age at enrollment"]),
+            "tuition_paid": bool(int(row["Tuition fees up to date"]) == 1),
+            "approved_sem1": int(row["Curricular units 1st sem (approved)"]),
+            "enrolled_sem1": int(row["Curricular units 1st sem (enrolled)"]),
+            "grade_sem1": round(float(row["Curricular units 1st sem (grade)"]), 1),
+            "actual_outcome": str(dataset_df.loc[row_idx, "Target"])
+        })
+
+    results.sort(key=lambda x: x["risk"], reverse=True)
+    avg_risk = float(np.mean([r["risk"] for r in results]))
+    return {
+        "total_students": len(results),
+        "flagged_count": flagged_count,
+        "flagged_rate": round(flagged_count / len(results), 4),
+        "high_risk_count": high_count,
+        "medium_risk_count": medium_count,
+        "low_risk_count": low_count,
+        "average_risk": round(avg_risk, 4),
+        "students": results
+    }
+
 
 if __name__ == "__main__":
     import uvicorn
